@@ -1,0 +1,7 @@
+streamlit
+pandas
+numpy
+plotly.graph_objs
+plotly.express
+seaborn
+re
