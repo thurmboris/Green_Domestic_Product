@@ -1,7 +1,6 @@
 streamlit
 pandas
 numpy
-plotly.graph_objs
-plotly.express
+plotly
 seaborn
 re
