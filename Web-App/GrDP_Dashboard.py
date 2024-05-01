@@ -131,7 +131,7 @@ elif selected_option == 'Map':            # Map of European countries
         # Visualization options
         if  selected_scenario == 'Transfer GHG emissions [t]':
             color_scale = px.colors.diverging.RdYlGn_r  # Green for negative, red for positive
-            range_col = (GHG_data['Transfer GHG emissions [t]'].min(), GHG_data['Transfer GHG emissions [t]'].max())     # Range to fix the legend independently of years
+            range_col = (-GHG_data['Transfer GHG emissions [t]'].max(), GHG_data['Transfer GHG emissions [t]'].max())     # Range to fix the legend independently of years
         else:
             color_scale = px.colors.sequential.Oranges  # Shades of orange for GHG emissions
             range_col = (0, GHG_data[['Territorial GHG emissions [t]', 'Residential GHG emissions [t]', 'Footprint GHG emissions [t]']].max().max()) # Range to fix the legend independently of years
