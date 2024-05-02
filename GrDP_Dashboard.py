@@ -130,7 +130,7 @@ if selected_option == 'Evolution of GHG emissions':     # Plot of the evolution 
         margin=dict(l=40, r=40, t=40, b=30)
     )
     # Plot graph
-    st.plotly_chart({'data': traces, 'layout': layout})
+    st.plotly_chart({'data': traces, 'layout': layout}, use_container_width=True)
 elif selected_option == 'Map':            # Map of European countries
     # Display map functionality
     selected_scenario = st.selectbox("Select Scenario:", GHG_data.columns[2:])
@@ -161,7 +161,7 @@ elif selected_option == 'Map':            # Map of European countries
         fig.update_layout(margin={"r":0,"t":0,"l":0,"b":0})
         fig.update_geos(projection_scale=1) 
         # Display plotly chart
-        st.plotly_chart(fig)
+        st.plotly_chart(fig, use_container_width=True)
     plot_map(selected_scenario)
 elif selected_option == 'Table':   # Dataframe with data
     all_countries_option = "All countries"
