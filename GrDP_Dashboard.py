@@ -64,8 +64,8 @@ This article allows you to interactively explore the pollution and external cost
 
 # Create a table of contents
 toc_items = ["What is the Green Domestic Product?",
-             "Air pollution is decreasing...",
-             "...but external costs remain significant", 
+             "Air pollution is decreasing",
+             "External costs remain significant", 
              "The GrDP of European countries", 
              "Can we decouple economic growth and pollution?"]
 
@@ -85,7 +85,7 @@ for item in toc_items:
 ############################################
 
 # Section: External costs
-st.header("Air pollution is decreasing...")
+st.header("Air pollution is decreasing")
 
 # Subsection: Greenhouse gases
 st.subheader("Emissions of greenhouse gas: far from net-zero")
@@ -180,10 +180,10 @@ st.subheader("Emissions of air pollutants and heavy metals: some notable progres
 st.markdown("""
 Fossil-fuel combustion and industrial and agricultural processes emit various other air pollutants. Once in the atmosphere, these pollutants can be directly inhaled by humans. They can also react with the environment, creating new harmful substances. Finally, they can contaminate water and soils, and then be ingested by ecosystems and in turn by humans. 
 
-The main air pollutants act as precursors to the creation of PM<sub>2.5</sub>, NO<sub>2</sub>, and ozone (O<sub>3</sub>). Human exposure to these substances leads to various respiratory and cardiovascular diseases (e.g., asthma and bronchitis) and excess mortality. Similarly, heavy metals exposure is a cause of health issues such as cancer, diabetes, respiratory and cardiovascular diseases. Lead and mercury can also be responsible for IQ loss. The impacts are not restricted to human health though. Ozone exposure decreases crops’ yields and biomass production in forests. NO<sub>x</sub> and SO<sub>2</sub>  damages buildings by degrading stone and metalwork. NO<sub>x</sub> and NH<sub>3</sub> affect ecosystems by modifying the nitrogen balance due to eutrophication. 
+Human exposure to air pollutants leads to various respiratory and cardiovascular diseases (e.g., asthma and bronchitis) and excess mortality. Similarly, heavy metals exposure is a cause of health issues such as cancer, diabetes, respiratory and cardiovascular diseases. Lead and mercury can also be responsible for IQ loss. The impacts are not restricted to human health though. Ozone exposure decreases crops’ yields and biomass production in forests. NOx and SO2 damages buildings by degrading stone and metalwork. NOx and NH3 affect ecosystems by modifying the nitrogen balance due to eutrophication. 
 
 This interactive chart shows the evolution of major air pollutants:
-- “main” air pollutants: particulate matter (PM<sub>2.5</sub> and PM<sub>10</sub>), sulphur dioxide (SO<sub>2</sub>), ammonia (NH<sub>3</sub>), nitrogen oxides (NO<sub>x</sub>), and non-methane volatile organic compounds (NMVOC),
+- “main” air pollutants: particulate matter (PM2.5 and PM10), sulphur dioxide (SO2), ammonia (NH3), nitrogen oxides (NOx), and non-methane volatile organic compounds (NMVOC),
 - heavy metals: arsenic (As), cadmium (Cd), chromium (Cr), lead (Pb), mercury (Hg), nickel (Ni).
 """)
 
@@ -195,7 +195,7 @@ This interactive chart shows the evolution of major air pollutants:
 ##################################################################
 
 # Section: External costs
-st.header("...but external costs remain significant")    
+st.header("External costs remain significant")    
 
 st.markdown("""
 In our context, external costs - or [externalities](https://en.wikipedia.org/wiki/Externality) - are the costs of air pollution to society and to the environment. Several methods are used to value externalities. Here is a short overview, and you can find a more detailed description in the methodology report available on the [E4S website](https://e4s.center/resources/reports/green-domestic-product/).
@@ -204,7 +204,7 @@ For the main air pollutants and heavy metals, we rely on the damage costs, i.e.,
 - The value of statistical life (VSL) measures how much people are willing to pay for a reduction in their risk of dying from adverse health conditions.
 - The value of life-year (VOLY) estimates the damage costs based upon the loss of life expectancy, expressed as potential years of life lost and accounting for the age at which deaths occur. VOLY provides a lower estimate than VSL for health damages.
 
-For greenhouse gases, we rely on avoidance costs, i.e., the costs to prevent externalities by decarbonizing, for two main reasons. First, damage costs are prone to significant uncertainties, with values from the literature ranging from a few euros to several thousand euros per ton of CO<sub>2</sub>. Second, international agreements have the goal to limit global temperature rise to 1.5-2°C above pre-industrial levels, thus preventing catastrophic climate change impacts. To account for uncertainties in the cost of decarbonization, we estimated the external costs with three values, taken from the European Commission report [Handbook on the external costs of transport (2020)](https://op.europa.eu/en/publication-detail/-/publication/9781f65f-8448-11ea-bf12-01aa75ed71a1/language-en): low (63 €2019/tCO<sub>2e</sub>), central (104 €2019/tCO<sub>2e</sub>), and high (524 €2019/tCO<sub>2e</sub>).
+For greenhouse gases, we rely on avoidance costs, i.e., the costs to prevent externalities by decarbonizing, for two main reasons. First, damage costs are prone to significant uncertainties, with values from the literature ranging from a few euros to several thousand euros per ton of CO2. Second, international agreements have the goal to limit global temperature rise to 1.5-2°C above pre-industrial levels, thus preventing catastrophic climate change impacts. To account for uncertainties in the cost of decarbonization, we estimated the external costs with three values, taken from the European Commission report [Handbook on the external costs of transport (2020)](https://op.europa.eu/en/publication-detail/-/publication/9781f65f-8448-11ea-bf12-01aa75ed71a1/language-en): low (63 €/tCO2eq), central (104 €/tCO2eq), and high (524 €/tCO2eq).
 """)
     
 ############################################
