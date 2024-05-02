@@ -59,32 +59,40 @@ With E4S, we propose a novel indicator, the Green Domestic Product (GrDP), to re
 """)
 
 st.write("""
-This article allows you to interactively explore the external costs, GrDP, and decoupling between economic growth and environmental pollution in European countries.
+This article allows you to interactively explore the pollution and external costs, GrDP, and decoupling between economic growth and environmental pollution in European countries.
 """)
 
 # Create a table of contents
 toc_items = ["What is the Green Domestic Product?",
-             "External costs are decreasing but remain significant", 
+             "Air pollution is decreasing...",
+             "...but external costs remain significant", 
              "The GrDP of European countries", 
              "Can we decouple economic growth and pollution?"]
 
 # Render the table of contents on the side of the page
 st.sidebar.header("Table of Contents")
 for item in toc_items:
-    st.sidebar.markdown(f"- [{item}](#{item.lower().replace(' ', '-').replace('.', '')})")
+    # Manually specify the anchor link for headers with special characters
+    if "?" in item:
+        anchor_link = item.lower().replace(' ', '-').replace('.', '').replace('?', '')  # Remove question mark from anchor link
+    else:
+        anchor_link = item.lower().replace(' ', '-').replace('.', '')
+    st.sidebar.markdown(f"- [{item}](#{anchor_link})")
 
         
-###################################################################
-##### External costs are decreasing but remain significant  ######
-##################################################################
+#############################################
+##### Air pollution is decreasing...  ######
+############################################
 
 # Section: External costs
-st.header("External costs are decreasing but remain significant")
+st.header("Air pollution is decreasing...")
 
 # Subsection: Greenhouse gases
-st.subheader("Greenhouse gas emissions")
+st.subheader("Emissions of greenhouse gas: far from net-zero")
 
 st.markdown("""
+GHGs are responsible for climate change, which has a wide range of negative impacts on human society and ecosystems by altering temperature and precipitation patterns. Climate change impacts include, for instance, a decrease in economic and agricultural productivity due to more frequent heatwaves and droughts, the destruction of manufactured capital due to extreme events, and biodiversity loss.
+
 This interactive chart shows the evolution of GHG emissions in European countries, according to various reporting methods: 
 - Territorial Emissions: accounts for all emissions from residents and non-residents inside a country. The National Emission Inventory follows the Intergovernmental Panel on Climate Change (IPCC) guidelines and is used as a basis for setting GHGs reduction targets in the context of international agreements such as the Kyoto Protocol and the Paris Agreement.
 - Residential Emissions: accounts for all emissions resulting from the activities of a country’s residents, including the ones abroad.
@@ -166,6 +174,38 @@ elif selected_option == 'Table':   # Dataframe with data
 
 
     
+# Subsection: Air pollutant
+st.subheader("Emissions of air pollutants and heavy metals: some notable progress")
+
+st.markdown("""
+Fossil-fuel combustion and industrial and agricultural processes emit various other air pollutants. Once in the atmosphere, these pollutants can be directly inhaled by humans. They can also react with the environment, creating new harmful substances. Finally, they can contaminate water and soils, and then be ingested by ecosystems and in turn by humans. 
+
+The main air pollutants act as precursors to the creation of PM<sub>2.5</sub>, NO<sub>2</sub>, and ozone (O<sub>3</sub>). Human exposure to these substances leads to various respiratory and cardiovascular diseases (e.g., asthma and bronchitis) and excess mortality. Similarly, heavy metals exposure is a cause of health issues such as cancer, diabetes, respiratory and cardiovascular diseases. Lead and mercury can also be responsible for IQ loss. The impacts are not restricted to human health though. Ozone exposure decreases crops’ yields and biomass production in forests. NO<sub>x</sub> and SO<sub>2</sub>  damages buildings by degrading stone and metalwork. NO<sub>x</sub> and NH<sub>3</sub> affect ecosystems by modifying the nitrogen balance due to eutrophication. 
+
+This interactive chart shows the evolution of major air pollutants:
+- “main” air pollutants: particulate matter (PM<sub>2.5</sub> and PM<sub>10</sub>), sulphur dioxide (SO<sub>2</sub>), ammonia (NH<sub>3</sub>), nitrogen oxides (NO<sub>x</sub>), and non-methane volatile organic compounds (NMVOC),
+- heavy metals: arsenic (As), cadmium (Cd), chromium (Cr), lead (Pb), mercury (Hg), nickel (Ni).
+""")
+
+
+
+    
+###################################################################
+##### ...but external costs remain significant  ######
+##################################################################
+
+# Section: External costs
+st.header("...but external costs remain significant")    
+
+st.markdown("""
+In our context, external costs - or [externalities](https://en.wikipedia.org/wiki/Externality) - are the costs of air pollution to society and to the environment. Several methods are used to value externalities. Here is a short overview, and you can find a more detailed description in the methodology report available on the [E4S website](https://e4s.center/resources/reports/green-domestic-product/).
+
+For the main air pollutants and heavy metals, we rely on the damage costs, i.e., the costs incurred by the pollution, such as agricultural production loss due to a decrease in crop yields. Most air pollutants lead to excess mortality. Although valuing excess mortality might raise ethical questions, the alternative – i.e., not accounting for such impacts – is arguably worse. Two techniques can be used to value excess mortality:
+- The value of statistical life (VSL) measures how much people are willing to pay for a reduction in their risk of dying from adverse health conditions.
+- The value of life-year (VOLY) estimates the damage costs based upon the loss of life expectancy, expressed as potential years of life lost and accounting for the age at which deaths occur. VOLY provides a lower estimate than VSL for health damages.
+
+For greenhouse gases, we rely on avoidance costs, i.e., the costs to prevent externalities by decarbonizing, for two main reasons. First, damage costs are prone to significant uncertainties, with values from the literature ranging from a few euros to several thousand euros per ton of CO<sub>2</sub>. Second, international agreements have the goal to limit global temperature rise to 1.5-2°C above pre-industrial levels, thus preventing catastrophic climate change impacts. To account for uncertainties in the cost of decarbonization, we estimated the external costs with three values, taken from the European Commission report [Handbook on the external costs of transport (2020)](https://op.europa.eu/en/publication-detail/-/publication/9781f65f-8448-11ea-bf12-01aa75ed71a1/language-en): low (63 €2019/tCO<sub>2e</sub>), central (104 €2019/tCO<sub>2e</sub>), and high (524 €2019/tCO<sub>2e</sub>).
+""")
     
 ############################################
 ##### The GrDP of European countries  ######
@@ -174,9 +214,9 @@ elif selected_option == 'Table':   # Dataframe with data
 # Section: GrDP
 st.header("The GrDP of European countries")
 
-####################################################################################
-##### Can we decouple economic growth and health/environmental externalities? ######
-####################################################################################
+###########################################################
+##### Can we decouple economic growth and pollution ######
+#########################################################
 
 # Section: Decoupling
 st.header("Can we decouple economic growth and pollution?")
