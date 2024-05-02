@@ -150,7 +150,7 @@ elif selected_option == 'Map':            # Map of European countries
                             color=column,
                             hover_name='countries',
                             animation_frame='Year',
-                            title=f"{column} by Country",
+                            title="",
                             color_continuous_scale=color_scale,
                             range_color=range_col,
                             scope='europe',
