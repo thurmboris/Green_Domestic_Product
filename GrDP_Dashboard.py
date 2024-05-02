@@ -88,7 +88,7 @@ for item in toc_items:
 st.header("Air pollution is decreasing")
 
 # Subsection: Greenhouse gases
-st.subheader("Emissions of greenhouse gas: far from net-zero")
+st.subheader("Greenhouse gas emissions: far from net-zero")
 
 st.markdown("""
 GHGs are responsible for climate change, which has a wide range of negative impacts on human society and ecosystems by altering temperature and precipitation patterns. Climate change impacts include, for instance, a decrease in economic and agricultural productivity due to more frequent heatwaves and droughts, the destruction of manufactured capital due to extreme events, and biodiversity loss.
@@ -183,11 +183,73 @@ Fossil-fuel combustion and industrial and agricultural processes emit various ot
 Human exposure to air pollutants leads to various respiratory and cardiovascular diseases (e.g., asthma and bronchitis) and excess mortality. Similarly, heavy metals exposure is a cause of health issues such as cancer, diabetes, respiratory and cardiovascular diseases. Lead and mercury can also be responsible for IQ loss. The impacts are not restricted to human health though. Ozone exposure decreases crops’ yields and biomass production in forests. NOx and SO2 damages buildings by degrading stone and metalwork. NOx and NH3 affect ecosystems by modifying the nitrogen balance due to eutrophication. 
 
 This interactive chart shows the evolution of major air pollutants:
-- “main” air pollutants: particulate matter (PM2.5 and PM10), sulphur dioxide (SO2), ammonia (NH3), nitrogen oxides (NOx), and non-methane volatile organic compounds (NMVOC),
+- “main” air pollutants: particulate matter (PM2.5 and PM10), sulphur oxides (SOx), ammonia (NH3), nitrogen oxides (NOx), and non-methane volatile organic compounds (NMVOC),
 - heavy metals: arsenic (As), cadmium (Cd), chromium (Cr), lead (Pb), mercury (Hg), nickel (Ni).
 """)
 
+# Option to select graph
+options_AP = ['Evolution of air pollutant emissions', 'Map', 'Table']
+selected_option_AP = st.radio("Select display option:", options_AP)
 
+# Select air pollutant data 
+AP_data = Data_for_calc.loc[:,['countries', 'Year', 'PM2.5 [t]',  'PM10 [t]', 'SOx [t]', 'NH3 [t]', 'NOx [t]', 'NMVOC [t]', 'As [t]', 'Cd [t]', 'Cr [t]', 'Pb [t]', 'Hg [t]', 'Ni [t]']]
+AP_list = ['PM2.5',  'PM10', 'SOx', 'NH3', 'NOx', 'NMVOC', 'As', 'Cd', 'Cr', 'Pb', 'Hg', 'Ni']
+default_pollutant = 'PM2.5'
+unique_countries_AP = unique_countries
+default_country_AP = 'Switzerland'
+selected_pollutant = st.selectbox("Select a pollutant:", AP_list, index=AP_list.index(default_pollutant))
+selected_pollutant_col = selected_pollutant + ' [t]'
+
+# Depending on the selected option, display the corresponding content
+if selected_option_AP == 'Evolution of air pollutant emissions':     # Plot of the evolution of air pollutant
+    # Selection of country
+    selected_country_AP = st.selectbox("Select a country:", unique_countries_AP, index=unique_countries_AP.index(default_country_AP), key='country_AP_selectbox')
+    # Filter data based on selected country
+    country_data_AP = AP_data.loc[AP_data['countries'] == selected_country_AP,['Year', selected_pollutant_col]]
+    # Create traces for different emissions
+    traces_AP = [
+        go.Scatter(x=country_data_AP['Year'], y=country_data_AP[selected_pollutant_col], mode='lines', name=selected_pollutant)
+    ]
+    # Create layout
+    layout_AP = go.Layout(
+        title=f'Emissions of {selected_pollutant} in {selected_country_AP}',
+        xaxis=dict(title='Year'),
+        yaxis=dict(title='Tonnes', rangemode='tozero'),  # Fix minimum y-axis value at zero
+        margin=dict(l=40, r=40, t=40, b=30)
+    )
+    # Plot graph
+    st.plotly_chart({'data': traces_AP, 'layout': layout_AP}, use_container_width=True)
+elif selected_option_AP == 'Map':            # Map of European countries
+    # Define function to plot map
+    def plot_map_AP(column):
+        # Create map
+        fig = px.choropleth(AP_data,
+                            locations='countries',
+                            locationmode='country names',
+                            color=column,
+                            hover_name='countries',
+                            animation_frame='Year',
+                            title="",
+                            color_continuous_scale=px.colors.sequential.Oranges,
+                            range_color=(0, AP_data[selected_pollutant_col].max()),
+                            scope='europe',
+                            height=600,
+                            width=800)
+        # Udpdate Layout
+        fig.update_coloraxes(colorbar_title=selected_pollutant_col)
+        fig.update_layout(margin={"r":0,"t":0,"l":0,"b":0})
+        fig.update_geos(projection_scale=1) 
+        # Display plotly chart
+        st.plotly_chart(fig, use_container_width=True)
+    plot_map_AP(selected_pollutant_col)
+elif selected_option_AP == 'Table':   # Dataframe with data
+    all_countries_option = "All countries"
+    selected_countries = st.multiselect("Select countries:", [all_countries_option] + unique_countries, default=all_countries_option)
+    if all_countries_option in selected_countries:
+        filtered_data = AP_data.copy()  # Make a copy of the original DataFrame
+    else:
+        filtered_data = AP_data[AP_data['countries'].isin(selected_countries)]
+    st.write(filtered_data)
 
     
 ###################################################################
