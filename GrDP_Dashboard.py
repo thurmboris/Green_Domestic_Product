@@ -6,41 +6,123 @@ import plotly.express as px
 import seaborn as sns
 import re
 
-# Set seaborn theme
-sns.set_theme()
+# Define the custom CSS
+custom_css = """
+<style>
+.stApp {
+    background-color: #333333; /* Black background color */
+    color: white;
+}
+
+.stMarkdown, .stText, .stWrite {
+    color: white; /* Ensure other texts remain white */
+}
+
+.stTitle {
+    color: white; /* White color for the title */
+}
+
+h1 {
+    color: #005DC4; /* Titles color */
+    text-align: left; /* Titles alignment */
+}
+
+h2, h3 {
+    color: #005DC4; /* Titles color */
+    text-align: left; /* Titles alignment */
+}
+
+h4, h5, h6 {
+    color: #0093C4; /* Titles color */
+}
+
+/* Target blockquote element and its pseudo-element */
+blockquote {
+    border-left: 1px solid white; /* Change the color of the blockquote line */
+    color: white; /* Ensure text inside blockquote is white */
+}
+
+blockquote:before {
+    background-color: white; /* Ensure pseudo-element is also white */
+}
+
+.stSelectbox > label {
+    color: white;
+}
+
+.stMultiselect > label {
+    color: white;
+}
+
+.stRadio > label {
+    color: white;
+}
+
+
+.main > div {
+            padding-left: 0rem;
+            padding-right: 0rem;
+        }
+
+</style>
+"""
+
+# Inject the custom CSS
+st.markdown(custom_css, unsafe_allow_html=True)
 
 # Load data
-External_costs = pd.read_csv('https://raw.githubusercontent.com/AntoineTrabia/Green-Domestic-Product/main/data/ExternalCostsDetailed.csv')
-External_costs_total = pd.read_csv('https://raw.githubusercontent.com/AntoineTrabia/Green-Domestic-Product/main/data/ExternalCostsTotal.csv')
-External_Costs_total_per_capita = pd.read_csv('https://raw.githubusercontent.com/AntoineTrabia/Green-Domestic-Product/main/data/ExternalCostsTotalPerCapita.csv')
-GrDP = pd.read_csv('https://raw.githubusercontent.com/AntoineTrabia/Green-Domestic-Product/main/data/GrDP.csv')
-GrDP_per_capita = pd.read_csv('https://raw.githubusercontent.com/AntoineTrabia/Green-Domestic-Product/main/data/GrDPPerCapita.csv')
-Data_for_GrDP = pd.read_csv('https://raw.githubusercontent.com/AntoineTrabia/Green-Domestic-Product/main/data/DataForCalc.csv')
-Data_for_calc = pd.read_csv('https://raw.githubusercontent.com/AntoineTrabia/Green-Domestic-Product/main/data/DataForEmissions.csv')
-External_Costs_Percent_GDP = pd.read_csv('https://raw.githubusercontent.com/AntoineTrabia/Green-Domestic-Product/main/data/ExternalCostsPercentGDP.csv')
-Decoupling_GDP_OECD = pd.read_csv('https://raw.githubusercontent.com/AntoineTrabia/Green-Domestic-Product/main/data/Decoupling_GDP_OECD.csv')
-Decoupling_POP_OECD = pd.read_csv('https://raw.githubusercontent.com/AntoineTrabia/Green-Domestic-Product/main/data/Decoupling_POP_OECD.csv')
-IntensityDecouplingFactor_GDP = pd.read_csv('https://raw.githubusercontent.com/AntoineTrabia/Green-Domestic-Product/main/data/IntensityDecouplingFactor_GDP.csv')
-IntensityDecouplingFactor_POP = pd.read_csv('https://raw.githubusercontent.com/AntoineTrabia/Green-Domestic-Product/main/data/IntensityDecouplingFactor_POP.csv')
-RelDifference_for_decoupling = pd.read_csv('https://raw.githubusercontent.com/AntoineTrabia/Green-Domestic-Product/main/data/RelDifference_for_decoupling.csv')
+Emissions = pd.read_csv('https://raw.githubusercontent.com/thurmboris/Green_Domestic_Product/main/data/final/Emissions.csv')
+External_costs = pd.read_csv('https://raw.githubusercontent.com/thurmboris/Green_Domestic_Product/main/data/final/ExternalCosts.csv')
+GrDP = pd.read_csv('https://raw.githubusercontent.com/thurmboris/Green_Domestic_Product/main/data/final/GrDP.csv')
+Decoupling_OECD = pd.read_csv('https://raw.githubusercontent.com/thurmboris/Green_Domestic_Product/main/data/final/Decoupling_OECD_Indicator.csv')
+Decoupling_Intensity_Factor = pd.read_csv('https://raw.githubusercontent.com/thurmboris/Green_Domestic_Product/main/data/final/Decoupling_Intensity_Factor.csv')
+Decoupling_Relative_Difference = pd.read_csv('https://raw.githubusercontent.com/thurmboris/Green_Domestic_Product/main/data/final/Decoupling_Relative_Difference.csv')
 
 #############################
 ##### GrDP Dashboard  ######
 ############################
 
 # Title
-st.title("Going beyond the GDP with the GrDP: Factoring health and environmental costs in economic success")
+st.title("Going beyond the GDP with the GrDP")
+
+st.markdown(f"<h2 style='margin-top: 0px; margin-bottom: 0px; padding-top: 5px; color: #005DC4'> Factoring health and environmental costs in economic success. </h2>", unsafe_allow_html=True)
+
+st.markdown("<div style='height: 25px;'></div>", unsafe_allow_html=True)  # Add big spacing
 
 st.image("https://viewpointvancouver.ca/wp-content/uploads/2012/11/new-yorker-shareholder-value.jpg", caption="Source: New Yorker", use_column_width=True)
 #st.image("https://dwighttowers.wordpress.com/wp-content/uploads/2011/05/polyp_cartoon_economic_growth_ecology.jpg?w=450&h=359", caption="Source: Dwighttowers", use_column_width=True)
 
+##########################
+##### Abstract ######
+#########################
+
+# Introduction paragraph
+
+st.markdown("""
+At [Enterprise for Society (E4S)](https://e4s.center/), we propose a shift beyond the Gross Domestic Product (GDP) towards a more comprehensive indicator: the Green Domestic Product (GrDP). The idea behind the GrDP is to extend the scope of the GDP by integrating the depletion of natural, social, and human capital. Concretely, the GrDP is defined as the GDP minus the external costs associated with economic activities, including the costs related to the emissions of greenhouse gases (GHG), air pollutants, and heavy metals.
+Our research underscores three key findings:
+
+1. In Europe, the gap between GDP and GrDP is narrowing, indicating that the economy is growing while external costs due to pollution are decreasing.
+
+2. Pollution costs persist at significant levels throughout Europe, ranging from approximately 5% of GDP in Switzerland and Nordic countries to over 30% in Eastern European nations.
+
+3. While there are glimpses of decoupling between economic growth and pollution, the pace of decarbonisation remains insufficient to achieve our goal of net zero GHG emissions by 2050.
+""")
+
+#st.write("""
+#Our decisions are heavily influenced by what we know and by what we measure. Therefore, flawed measurements can skew our judgment and lead to distorted decisions. With GrDP, which accounts for economic, environmental, and social dimensions, our aim is to empower individuals, particularly policymakers, to make more informed and sustainable choices. This approach transcends the traditional dichotomy between fostering economic growth and protecting the environment, offering a path towards sustainable prosperity and well-being.
+#""")
+
+st.write("""
+This article allows you to interactively explore these results and visualize the pollution and external costs, GrDP, and decoupling between economic growth and environmental pollution in European countries.
+""")
 
 ##########################
 ##### Introduction ######
 #########################
 
 # Introduction paragraph
-st.header("What is the Green Domestic Product?")
+st.header("Why the Green Domestic Product?")
 
 st.write("""
 The Gross Domestic Product (GDP) is a valuable indicator measuring the monetary value of all goods and services produced in a country within a given time period. However, the GDP is not and never was an indicator of economic performance and social progress. Already in 1934, Simon Kuznets, who invented the Gross National Product (GNP) – GDP’s predecessor, warned that national income statistics do not measure welfare. Indeed, while economic science is interested in properly managing all resources, the GDP does not encompass the indirect impacts of productive activities such as environmental pollution. Thus, the GDP is not a good measure of the value effectively created because it fails to account for the depletion of natural, social, and human capital associated with economic activities.
@@ -54,16 +136,13 @@ st.markdown("> What we measure affects what we do; and if our measurements are f
 
 st.markdown("<div style='text-align: right;'> Stiglitz, Sen, Fitoussi et al., 2009. <a href='https://ec.europa.eu/eurostat/documents/8131721/8131772/Stiglitz-Sen-Fitoussi-Commission-report.pdf'>Report by the Commission on the Measurement of Economic Performance and Social Progress</a>. p7</div>", unsafe_allow_html=True)
 
-st.markdown("""
-With E4S, we propose a novel indicator, the Green Domestic Product (GrDP), to remedy some of the shortcomings of GDP. The GrDP is calculated by subtracting the external costs associated with producing goods and services from the standard measurement of GDP. The current scope of the GrDP includes the emissions of greenhouse gases (GHG), air pollutants, and heavy metals. The impacts covered include climate change, health issues, decrease in crops’ yields and biomass production, buildings degradation, and damages to ecosystems due to eutrophication. You can learn more about the GrDP, including a detailed description of the method used, data scources, and assumptions, on the [E4S webpage Green Domestic Product](https://e4s.center/resources/reports/green-domestic-product/). 
-""")
+st.markdown("<div style='height: 20px;'></div>", unsafe_allow_html=True)  # Add big spacing
 
-st.write("""
-This article allows you to interactively explore the pollution and external costs, GrDP, and decoupling between economic growth and environmental pollution in European countries.
+st.markdown("""With E4S, we propose a novel indicator, the Green Domestic Product (GrDP), to remedy some of the shortcomings of GDP. The GrDP is calculated by subtracting the external costs associated with producing goods and services from the standard measurement of GDP. The current scope of the GrDP includes the emissions of greenhouse gases (GHG), air pollutants, and heavy metals. The impacts covered include climate change, health issues, decrease in crops’ yields and biomass production, buildings degradation, and damages to ecosystems due to eutrophication. You can learn more about the GrDP, including a detailed description of the method used, data scources, and assumptions, on the [E4S webpage Green Domestic Product](https://e4s.center/resources/reports/green-domestic-product/). 
 """)
 
 # Create a table of contents
-toc_items = ["What is the Green Domestic Product?",
+toc_items = ["Why the Green Domestic Product?",
              "Air pollution is decreasing",
              "External costs remain significant", 
              "The GrDP of European countries", 
@@ -94,23 +173,25 @@ st.markdown("""
 GHGs are responsible for climate change, which has a wide range of negative impacts on human society and ecosystems by altering temperature and precipitation patterns. Climate change impacts include, for instance, a decrease in economic and agricultural productivity due to more frequent heatwaves and droughts, the destruction of manufactured capital due to extreme events, and biodiversity loss.
 
 This interactive chart shows the evolution of GHG emissions in European countries, according to various reporting methods: 
-- Territorial Emissions: accounts for all emissions from residents and non-residents inside a country. The National Emission Inventory follows the Intergovernmental Panel on Climate Change (IPCC) guidelines and is used as a basis for setting GHGs reduction targets in the context of international agreements such as the Kyoto Protocol and the Paris Agreement.
-- Residential Emissions: accounts for all emissions resulting from the activities of a country’s residents, including the ones abroad.
+- Territorial Emissions: accounts for all emissions from residents and non-residents inside a country. The National Emission Inventory follows the Intergovernmental Panel on Climate Change (IPCC) guidelines and is used as a basis for setting GHGs reduction targets in the context of international agreements such as the Kyoto Protocol and the Paris Agreement. Data source: European Environment Agency (EEA), via [Eurostat](https://ec.europa.eu/eurostat/databrowser/view/env_air_gge__custom_11586061/default/table?lang=en) 
+- Residential Emissions: accounts for all emissions resulting from the activities of a country’s residents, including the ones abroad. Data source: [Eurostat](https://ec.europa.eu/eurostat/databrowser/view/env_ac_ainah_r2__custom_11586096/default/table?lang=en) 
 - Transfer Emissions: emissions generated by the production of goods and services that are imported minus the emissions generated by the production of goods and services that are exported, as calculated in the [Global Carbon Atlas](https://globalcarbonatlas.org/emissions/carbon-emissions/). 
 - Footprint Emissions: sum of the residential and transfer emissions. These emissions are often called "consumption-based" since emissions are allocated according to where they were consumed, rather than where they were produced with territorial emissions reporting.
 """)
 
 # Option to select graph
-options = ['Evolution of GHG emissions', 'Map', 'Table']
-selected_option = st.radio("Select display option:", options)
+options = [':blue[Evolution of GHG emissions]', ':blue[Map]', ':blue[Table]']
+selected_option = st.radio("Select display option", options)
 
 # Select GHG data 
-GHG_data = Data_for_calc.loc[:,['countries', 'Year', 'Territorial GHG emissions [t]', 'Residential GHG emissions [t]', 'Footprint GHG emissions [t]', 'Transfer GHG emissions [t]']]
+GHG_data = Emissions.loc[:,['countries', 'Year', 'Territorial GHG emissions [t]', 'Residential GHG emissions [t]', 'Footprint GHG emissions [t]', 'Transfer GHG emissions [t]']]
 GHG_data['Transfer GHG emissions [t]'] *= -1
-unique_countries = sorted(Data_for_calc['countries'].unique())
+GHG_data = GHG_data.sort_values(by=['countries', 'Year'])
+unique_countries = sorted(External_costs['countries'].unique())
+GHG_data = GHG_data.loc[GHG_data.countries.isin(unique_countries)]
 
 # Depending on the selected option, display the corresponding content
-if selected_option == 'Evolution of GHG emissions':     # Plot of the evolution of GHG
+if selected_option == ':blue[Evolution of GHG emissions]':     # Plot of the evolution of GHG
     # Selection of country
     default_country = 'Switzerland'
     selected_country = st.selectbox("Select a country:", unique_countries, index=unique_countries.index(default_country))
@@ -121,7 +202,7 @@ if selected_option == 'Evolution of GHG emissions':     # Plot of the evolution 
         go.Scatter(x=country_data['Year'], y=country_data['Territorial GHG emissions [t]'], mode='lines', name='Territorial Emissions'),
         go.Scatter(x=country_data['Year'], y=country_data['Residential GHG emissions [t]'], mode='lines', name='Residential Emissions'),
         go.Scatter(x=country_data['Year'], y=country_data['Footprint GHG emissions [t]'], mode='lines', name='Footprint Emissions')
-    ]
+    ]    
     # Create layout
     layout = go.Layout(
         title=f'GHG emissions of {selected_country}',
@@ -131,7 +212,8 @@ if selected_option == 'Evolution of GHG emissions':     # Plot of the evolution 
     )
     # Plot graph
     st.plotly_chart({'data': traces, 'layout': layout}, use_container_width=True)
-elif selected_option == 'Map':            # Map of European countries
+    
+elif selected_option == ':blue[Map]':            # Map of European countries
     # Display map functionality
     selected_scenario = st.selectbox("Select Scenario:", GHG_data.columns[2:])
     # Define function to plot map
@@ -140,30 +222,66 @@ elif selected_option == 'Map':            # Map of European countries
         if  selected_scenario == 'Transfer GHG emissions [t]':
             color_scale = px.colors.diverging.RdYlGn_r  # Green for negative, red for positive
             range_col = (-GHG_data['Transfer GHG emissions [t]'].max(), GHG_data['Transfer GHG emissions [t]'].max())     # Range to fix the legend independently of years
-        else:
-            color_scale = px.colors.sequential.Oranges  # Shades of orange for GHG emissions
-            range_col = (0, GHG_data[['Territorial GHG emissions [t]', 'Residential GHG emissions [t]', 'Footprint GHG emissions [t]']].max().max()) # Range to fix the legend independently of years
-        # Create map
-        fig = px.choropleth(GHG_data,
-                            locations='countries',
-                            locationmode='country names',
-                            color=column,
-                            hover_name='countries',
-                            animation_frame='Year',
-                            title="",
-                            color_continuous_scale=color_scale,
-                            range_color=range_col,
-                            scope='europe',
-                            height=600,
-                            width=800)
-        # Udpdate Layout
-        fig.update_coloraxes(colorbar_title=selected_scenario)
-        fig.update_layout(margin={"r":0,"t":0,"l":0,"b":0})
-        fig.update_geos(projection_scale=1) 
+            legend_title = 'Transfer GHG<br>emissions [t]'
+        elif selected_scenario == 'Territorial GHG emissions [t]':
+            color_scale = px.colors.sequential.Oranges  # Shades of orange
+            range_col = (0, GHG_data['Territorial GHG emissions [t]'].max())
+            legend_title = 'Territorial GHG<br>emissions [t]'
+        elif selected_scenario == 'Residential GHG emissions [t]':
+            color_scale = px.colors.sequential.Oranges  # Shades of orange
+            range_col = (0, GHG_data['Residential GHG emissions [t]'].max())
+            legend_title = 'Residential GHG<br>emissions [t]'
+        elif selected_scenario == 'Footprint GHG emissions [t]':
+            color_scale = px.colors.sequential.Oranges  # Shades of orange
+            range_col = (0, GHG_data['Footprint GHG emissions [t]'].max())
+            legend_title = 'Footprint GHG<br>emissions [t]'    
+        fig = px.choropleth(
+            GHG_data,
+            locations='countries',
+            locationmode='country names',
+            color=column,
+            hover_name='countries',
+            animation_frame='Year',  # Assuming 'Year' is the column name
+            title="",
+            color_continuous_scale=color_scale,
+            range_color=range_col,
+            scope='europe',
+            height=600,
+            width=800
+        )  
+        # Update Layout
+        fig.update_coloraxes(colorbar_title=legend_title)
+        fig.update_layout(
+            margin={"r": 0, "t": 0, "l": 0, "b": 0},
+            geo=dict(
+                projection_scale=1.7,  # Adjust this value to zoom in or out
+                center=dict(lat=55, lon=10)  # Center on mainland Europe
+            ),
+            updatemenus=[{
+                'x': 0.1,
+                'xanchor': 'right',
+                'y': 0.1,
+                'yanchor': 'top'
+            }],
+            sliders=[{
+                'steps': [{
+                    'args': [[frame.name], {'frame': {'duration': 300, 'redraw': True}, 'mode': 'immediate', 'transition': {'duration': 300}}],
+                    'label': frame.name,
+                    'method': 'animate'
+                } for frame in fig.frames],
+                'active': len(fig.frames) - 1,  # Set the slider to the latest year
+                'x': 0.1,
+                'y': 0.1,
+                'len': 0.9,
+                'transition': {'duration': 300, 'easing': 'cubic-in-out'}
+            }]            
+        )
+        fig.update_traces(z=fig.frames[-1].data[0].z, hovertemplate=fig.frames[-1].data[0].hovertemplate)
         # Display plotly chart
-        st.plotly_chart(fig, use_container_width=True)
+        st.plotly_chart(fig, use_container_width=True)      
     plot_map(selected_scenario)
-elif selected_option == 'Table':   # Dataframe with data
+    
+elif selected_option == ':blue[Table]':   # Dataframe with data
     all_countries_option = "All countries"
     selected_countries = st.multiselect("Select countries:", [all_countries_option] + unique_countries, default=all_countries_option)
     if all_countries_option in selected_countries:
@@ -185,27 +303,33 @@ Human exposure to air pollutants leads to various respiratory and cardiovascular
 This interactive chart shows the evolution of major air pollutants:
 - “main” air pollutants: particulate matter (PM2.5 and PM10), sulphur oxides (SOx), ammonia (NH3), nitrogen oxides (NOx), and non-methane volatile organic compounds (NMVOC),
 - heavy metals: arsenic (As), cadmium (Cd), chromium (Cr), lead (Pb), mercury (Hg), nickel (Ni).
+
+Data source: European Environment Agency (EEA), via [Eurostat](https://ec.europa.eu/eurostat/databrowser/view/ENV_AIR_EMIS__custom_11586313/default/table?lang=en)
 """)
 
 # Option to select graph
-options_AP = ['Evolution of air pollutant emissions', 'Map', 'Table']
+options_AP = [':blue[Evolution of air pollutant emissions]', ':blue[Map]', ':blue[Table]']
 selected_option_AP = st.radio("Select display option:", options_AP)
 
 # Select air pollutant data 
-AP_data = Data_for_calc.loc[:,['countries', 'Year', 'PM2.5 [t]',  'PM10 [t]', 'SOx [t]', 'NH3 [t]', 'NOx [t]', 'NMVOC [t]', 'As [t]', 'Cd [t]', 'Cr [t]', 'Pb [t]', 'Hg [t]', 'Ni [t]']]
+AP_data = Emissions.loc[:, ['countries', 'Year', 'PM2.5 [t]',  'PM10 [t]', 'SOx [t]', 'NH3 [t]', 'NOx [t]', 'NMVOC [t]', 'As [t]', 'Cd [t]', 'Cr [t]', 'Pb [t]', 'Hg [t]', 'Ni [t]']]
 AP_list = ['PM2.5',  'PM10', 'SOx', 'NH3', 'NOx', 'NMVOC', 'As', 'Cd', 'Cr', 'Pb', 'Hg', 'Ni']
-default_pollutant = 'PM2.5'
 unique_countries_AP = unique_countries
+AP_data = AP_data.loc[AP_data.countries.isin(unique_countries_AP)]
+AP_data = AP_data.sort_values(by=['countries', 'Year'])
 default_country_AP = 'Switzerland'
+
+# Select pollutant
+default_pollutant = 'PM2.5'
 selected_pollutant = st.selectbox("Select a pollutant:", AP_list, index=AP_list.index(default_pollutant))
 selected_pollutant_col = selected_pollutant + ' [t]'
 
 # Depending on the selected option, display the corresponding content
-if selected_option_AP == 'Evolution of air pollutant emissions':     # Plot of the evolution of air pollutant
+if selected_option_AP == ':blue[Evolution of air pollutant emissions]':     # Plot of the evolution of air pollutant
     # Selection of country
     selected_country_AP = st.selectbox("Select a country:", unique_countries_AP, index=unique_countries_AP.index(default_country_AP), key='country_AP_selectbox')
     # Filter data based on selected country
-    country_data_AP = AP_data.loc[AP_data['countries'] == selected_country_AP,['Year', selected_pollutant_col]]
+    country_data_AP = AP_data.loc[AP_data['countries'] == selected_country_AP, ['Year', selected_pollutant_col]]
     # Create traces for different emissions
     traces_AP = [
         go.Scatter(x=country_data_AP['Year'], y=country_data_AP[selected_pollutant_col], mode='lines', name=selected_pollutant)
@@ -219,37 +343,67 @@ if selected_option_AP == 'Evolution of air pollutant emissions':     # Plot of t
     )
     # Plot graph
     st.plotly_chart({'data': traces_AP, 'layout': layout_AP}, use_container_width=True)
-elif selected_option_AP == 'Map':            # Map of European countries
+    
+elif selected_option_AP == ':blue[Map]': # Map of European countries
     # Define function to plot map
     def plot_map_AP(column):
         # Create map
-        fig = px.choropleth(AP_data,
-                            locations='countries',
-                            locationmode='country names',
-                            color=column,
-                            hover_name='countries',
-                            animation_frame='Year',
-                            title="",
-                            color_continuous_scale=px.colors.sequential.Oranges,
-                            range_color=(0, AP_data[selected_pollutant_col].max()),
-                            scope='europe',
-                            height=600,
-                            width=800)
-        # Udpdate Layout
+        fig = px.choropleth(
+            AP_data,
+            locations='countries',
+            locationmode='country names',
+            color=column,
+            hover_name='countries',
+            animation_frame='Year',  # Assuming 'Year' is the column name
+            title="",
+            color_continuous_scale=px.colors.sequential.Oranges,
+            range_color=(0, AP_data[selected_pollutant_col].max()),
+            scope='europe',
+            height=600,
+            width=800
+        )     
+        # Update Layout
         fig.update_coloraxes(colorbar_title=selected_pollutant_col)
-        fig.update_layout(margin={"r":0,"t":0,"l":0,"b":0})
-        fig.update_geos(projection_scale=1) 
+        fig.update_layout(
+            margin={"r": 0, "t": 0, "l": 0, "b": 0},
+            geo=dict(
+                projection_scale=1.7,  # Adjust this value to zoom in or out
+                center=dict(lat=55, lon=10)  # Center on mainland Europe
+            ),
+            updatemenus=[{
+                'x': 0.1,
+                'xanchor': 'right',
+                'y': 0.1,
+                'yanchor': 'top'
+            }],
+            sliders=[{
+                'steps': [{
+                    'args': [[frame.name], {'frame': {'duration': 300, 'redraw': True}, 'mode': 'immediate', 'transition': {'duration': 300}}],
+                    'label': frame.name,
+                    'method': 'animate'
+                } for frame in fig.frames],
+                'active': len(fig.frames) - 1,  # Set the slider to the latest year
+                'x': 0.1,
+                'y': 0.1,
+                'len': 0.9,
+                'transition': {'duration': 300, 'easing': 'cubic-in-out'}
+            }]            
+        )
+        fig.update_traces(z=fig.frames[-1].data[0].z, hovertemplate=fig.frames[-1].data[0].hovertemplate)
         # Display plotly chart
         st.plotly_chart(fig, use_container_width=True)
+    # Plot map
     plot_map_AP(selected_pollutant_col)
-elif selected_option_AP == 'Table':   # Dataframe with data
+    
+elif selected_option_AP == ':blue[Table]':   # Dataframe with data
     all_countries_option = "All countries"
-    selected_countries = st.multiselect("Select countries:", [all_countries_option] + unique_countries, default=all_countries_option)
+    selected_countries = st.multiselect("Select countries:", [all_countries_option] + unique_countries_AP, default=all_countries_option, key='table_air_pol')
     if all_countries_option in selected_countries:
         filtered_data = AP_data.copy()  # Make a copy of the original DataFrame
     else:
         filtered_data = AP_data[AP_data['countries'].isin(selected_countries)]
     st.write(filtered_data)
+
 
     
 ###################################################################
@@ -268,6 +422,217 @@ For the main air pollutants and heavy metals, we rely on the damage costs, i.e.,
 
 For greenhouse gases, we rely on avoidance costs, i.e., the costs to prevent externalities by decarbonizing, for two main reasons. First, damage costs are prone to significant uncertainties, with values from the literature ranging from a few euros to several thousand euros per ton of CO2. Second, international agreements have the goal to limit global temperature rise to 1.5-2°C above pre-industrial levels, thus preventing catastrophic climate change impacts. To account for uncertainties in the cost of decarbonization, we estimated the external costs with three values, taken from the European Commission report [Handbook on the external costs of transport (2020)](https://op.europa.eu/en/publication-detail/-/publication/9781f65f-8448-11ea-bf12-01aa75ed71a1/language-en): low (63 €/tCO2eq), central (104 €/tCO2eq), and high (524 €/tCO2eq).
 """)
+
+st.write("""
+This interactive chart illustrates the evolution of external costs in European countries, based on the various reporting methods and externalities pricing techniques introduced earlier.
+""")
+
+# Option to select graph for external costs
+options_EC = [':blue[Evolution of external costs]', ':blue[Map]', ':blue[Table]']
+selected_option_EC = st.radio("Select display option:", options_EC, key="radio_EC")
+
+# Select External Costs data and rename columns
+EC_data = External_costs.loc[:, ['countries', 
+                                 'Year',
+                                 'GHG: Territorial & Low scenario [Euro]',
+                                 'GHG: Territorial & Central scenario [Euro]',
+                                 'GHG: Territorial & High scenario [Euro]',
+                                 'GHG: Residential & Low scenario [Euro]',
+                                 'GHG: Residential & Central scenario [Euro]',
+                                 'GHG: Residential & High scenario [Euro]',
+                                 'GHG: Footprint & Low scenario [Euro]',
+                                 'GHG: Footprint & Central scenario [Euro]',
+                                 'GHG: Footprint & High scenario [Euro]',
+                                 'Air Pollutants - VOLY [Euro]',
+                                 'Air Pollutants - VSL [Euro]',
+                                 'Heavy Metals (Total) [Euro]',
+                                 'External costs (Territorial & Low GHG with VOLY) scenario [Euro]',
+                                 'External costs (Territorial & Low GHG with VSL) scenario [Euro]',
+                                 'External costs (Territorial & Central GHG with VOLY) scenario [Euro]',
+                                 'External costs (Territorial & Central GHG with VSL) scenario [Euro]',
+                                 'External costs (Territorial & High GHG with VOLY) scenario [Euro]',
+                                 'External costs (Territorial & High GHG with VSL) scenario [Euro]',
+                                 'External costs (Residential & Low GHG with VOLY) scenario [Euro]',
+                                 'External costs (Residential & Low GHG with VSL) scenario [Euro]',
+                                 'External costs (Residential & Central GHG with VOLY) scenario [Euro]',
+                                 'External costs (Residential & Central GHG with VSL) scenario [Euro]',
+                                 'External costs (Residential & High GHG with VOLY) scenario [Euro]',
+                                 'External costs (Residential & High GHG with VSL) scenario [Euro]',
+                                 'External costs (Footprint & Low GHG with VOLY) scenario [Euro]',
+                                 'External costs (Footprint & Low GHG with VSL) scenario [Euro]',
+                                 'External costs (Footprint & Central GHG with VOLY) scenario [Euro]',
+                                 'External costs (Footprint & Central GHG with VSL) scenario [Euro]',
+                                 'External costs (Footprint & High GHG with VOLY) scenario [Euro]',
+                                 'External costs (Footprint & High GHG with VSL) scenario [Euro]',
+                                 '(Territorial & Low GHG with VOLY) scenario [%]',
+                                 '(Territorial & Low GHG with VSL) scenario [%]',
+                                 '(Territorial & Central GHG with VOLY) scenario [%]',
+                                 '(Territorial & Central GHG with VSL) scenario [%]',
+                                 '(Territorial & High GHG with VOLY) scenario [%]',
+                                 '(Territorial & High GHG with VSL) scenario [%]',
+                                 '(Residential & Low GHG with VOLY) scenario [%]',
+                                 '(Residential & Low GHG with VSL) scenario [%]',
+                                 '(Residential & Central GHG with VOLY) scenario [%]',
+                                 '(Residential & Central GHG with VSL) scenario [%]',
+                                 '(Residential & High GHG with VOLY) scenario [%]',
+                                 '(Residential & High GHG with VSL) scenario [%]',
+                                 '(Footprint & Low GHG with VOLY) scenario [%]',
+                                 '(Footprint & Low GHG with VSL) scenario [%]',
+                                 '(Footprint & Central GHG with VOLY) scenario [%]',
+                                 '(Footprint & Central GHG with VSL) scenario [%]',
+                                 '(Footprint & High GHG with VOLY) scenario [%]',
+                                 '(Footprint & High GHG with VSL) scenario [%]'
+                                ]]
+EC_list = ['Territorial GHG emissions, Low carbon cost, VOLY valuation', 
+           'Territorial GHG emissions, Low carbon cost, VSL valuation', 
+           'Territorial GHG emissions, Central carbon cost, VOLY valuation', 
+           'Territorial GHG emissions, Central carbon cost, VSL valuation', 
+           'Territorial GHG emissions, High carbon cost, VOLY valuation', 
+           'Territorial GHG emissions, High carbon cost, VSL valuation',
+           'Residential GHG emissions, Low carbon cost, VOLY valuation', 
+           'Residential GHG emissions, Low carbon cost, VSL valuation', 
+           'Residential GHG emissions, Central carbon cost, VOLY valuation', 
+           'Residential GHG emissions, Central carbon cost, VSL valuation', 
+           'Residential GHG emissions, High carbon cost, VOLY valuation', 
+           'Residential GHG emissions, High carbon cost, VSL valuation',
+           'Footprint GHG emissions, Low carbon cost, VOLY valuation', 
+           'Footprint GHG emissions, Low carbon cost, VSL valuation', 
+           'Footprint GHG emissions, Central carbon cost, VOLY valuation', 
+           'Footprint GHG emissions, Central carbon cost, VSL valuation', 
+           'Footprint GHG emissions, High carbon cost, VOLY valuation', 
+           'Footprint GHG emissions, High carbon cost, VSL valuation']
+new_column_names = ['External costs ('+item+') [Euro]' for item in EC_list]+['External costs ('+item+') [% of GDP]' for item in EC_list]
+EC_data = EC_data.rename(columns=dict(zip(EC_data.columns[14:], new_column_names)))
+EC_data = EC_data.sort_values(by=['countries', 'Year'])
+
+# Default scenarios
+unique_countries_EC = unique_countries
+default_country_EC = 'Switzerland'
+
+# Depending on the selected option, display the corresponding content
+if selected_option_EC == ':blue[Evolution of external costs]':  # Plot of the evolution of external cost by type of pollutant
+    # Selection of country
+    selected_country_EC = st.selectbox("Select a country:", unique_countries_EC, index=unique_countries_EC.index(default_country_EC), key='country_EC_selectbox')  
+    # Create three columns for the selectboxes
+    col1, col2, col3 = st.columns(3)
+    with col1:
+        ghg_report = st.selectbox("Select GHG reporting:", ['Territorial', 'Residential', 'Footprint'], index=0)
+    with col2:
+        carbon_cost = st.selectbox("Select cost of carbon:", ['Low', 'Central', 'High'], index=1)
+    with col3:
+        valuation_method = st.selectbox("Select valuation method:", ['VSL', 'VOLY'], index=0)
+    # Define function to plot external costs
+    def plot_area_chart(country, ghg_report, carbon_cost, valuation_method):
+        # Construct column names based on selected options
+        ghg_column = f"GHG: {ghg_report} & {carbon_cost} scenario [Euro]"
+        airpol_column = f"Air Pollutants - {valuation_method} [Euro]"        
+        # Select columns according to scenario
+        AreaChart = EC_data.loc[(EC_data["countries"] == country), 
+                                ["Year", ghg_column, airpol_column, 'Heavy Metals (Total) [Euro]']]        
+        # Rename columns
+        AreaChart = AreaChart.rename(columns={
+            ghg_column: 'GHG',
+            airpol_column: 'Air Pollutants',
+            'Heavy Metals (Total) [Euro]': 'Heavy Metals'
+        })
+        # Find the first year with data for GHG emissions
+        first_year = AreaChart.dropna(subset=['GHG']).iloc[0]['Year']
+        # Melt the dataframe for Plotly Express
+        AreaChart_melted = AreaChart.melt(id_vars='Year', 
+                                          value_vars=['GHG', 'Air Pollutants', 'Heavy Metals'], 
+                                          var_name='Pollutant', 
+                                          value_name='Cost')        
+        # Create the stacked area chart
+        fig = px.area(AreaChart_melted, x='Year', y='Cost', color='Pollutant', 
+                      labels={'Cost': 'External Costs [Euro]', 'Year': 'Year'},
+                      title=f"Evolution of external costs per group of pollutants in {country}, in Euros")        
+        # Update layout 
+        fig.update_layout(legend=dict(title='Pollutant'),
+                          xaxis=dict(title='Year', range=[first_year, AreaChart['Year'].max()]),
+                          yaxis=dict(title='External Costs [Euro]', rangemode='tozero'))        
+        # Display the plot in Streamlit
+        st.plotly_chart(fig, use_container_width=True)
+    
+    # Plot the stacked area chart based on the selected options
+    plot_area_chart(selected_country_EC, ghg_report, carbon_cost, valuation_method)
+    
+elif selected_option_EC == ':blue[Map]':  # Map of European countries
+    # Selection of metric
+    selected_metric = st.selectbox("Select metric:", ['% of GDP', 'Euro'], key="radio_metric_EC")
+    # Selection of GHG reporting, Carbon cost, and Valuation method
+    col1, col2, col3 = st.columns(3)
+    with col1:
+        ghg_report = st.selectbox("Select GHG reporting:", ['Territorial', 'Residential', 'Footprint'], index=0, key="map_ghg_report")
+    with col2:
+        carbon_cost = st.selectbox("Select cost of carbon:", ['Low', 'Central', 'High'], index=1, key="map_carbon_cost")
+    with col3:
+        valuation_method = st.selectbox("Select valuation method:", ['VSL', 'VOLY'], index=0, key="map_valuation_method")
+    # Construct the scenario string based on the selected options
+    selected_scenario_EC = f'{ghg_report} GHG emissions, {carbon_cost} carbon cost, {valuation_method} valuation'
+    if selected_metric == 'Euro':
+        selected_scenario_col_EC = 'External costs (' + selected_scenario_EC + ') [Euro]'
+        title_EC = 'External costs<br>[Euro]'
+    else:
+        selected_scenario_col_EC = 'External costs (' + selected_scenario_EC + ') [% of GDP]'
+        title_EC = 'External costs<br>[% of GDP]'
+    # Define function to plot map
+    def plot_map_EC(column):
+        # Create map
+        fig = px.choropleth(
+            EC_data,
+            locations='countries',
+            locationmode='country names',
+            color=column,
+            hover_name='countries',
+            animation_frame='Year',  # Assuming 'Year' is the column name
+            title="",
+            color_continuous_scale=px.colors.sequential.Oranges,
+            scope='europe',
+            height=600,
+            width=800
+        )      
+        # Update Layout
+        fig.update_coloraxes(colorbar_title=title_EC)
+        fig.update_layout(
+            margin={"r": 0, "t": 0, "l": 0, "b": 0},
+            geo=dict(
+                projection_scale=1.7,  # Adjust this value to zoom in or out
+                center=dict(lat=55, lon=10)  # Center on mainland Europe
+            ),
+            updatemenus=[{
+                'x': 0.1,
+                'xanchor': 'right',
+                'y': 0.1,
+                'yanchor': 'top'
+            }],
+            sliders=[{
+                'steps': [{
+                    'args': [[frame.name], {'frame': {'duration': 300, 'redraw': True}, 'mode': 'immediate', 'transition': {'duration': 300}}],
+                    'label': frame.name,
+                    'method': 'animate'
+                } for frame in fig.frames],
+                'active': len(fig.frames) - 1,  # Set the slider to the latest year
+                'x': 0.1,
+                'y': 0.1,
+                'len': 0.9,
+                'transition': {'duration': 300, 'easing': 'cubic-in-out'}
+            }]            
+        )
+        fig.update_traces(z=fig.frames[-1].data[0].z, hovertemplate=fig.frames[-1].data[0].hovertemplate)
+        # Display plotly chart
+        st.plotly_chart(fig, use_container_width=True)       
+    # Plot the map
+    plot_map_EC(selected_scenario_col_EC)
+    
+elif selected_option_EC == ':blue[Table]':  # Dataframe with data
+    all_countries_option = "All countries"
+    selected_countries = st.multiselect("Select countries:", [all_countries_option] + unique_countries_EC, default=all_countries_option, key='table_EC')
+    if all_countries_option in selected_countries:
+        filtered_data = EC_data.copy()  # Make a copy of the original DataFrame
+    else:
+        filtered_data = EC_data[EC_data['countries'].isin(selected_countries)]
+    st.write(filtered_data)
+
     
 ############################################
 ##### The GrDP of European countries  ######
@@ -276,9 +641,625 @@ For greenhouse gases, we rely on avoidance costs, i.e., the costs to prevent ext
 # Section: GrDP
 st.header("The GrDP of European countries")
 
+st.write("""
+The GrDP is defined as the GDP minus the external costs associated with economic activities:
+$$
+\mathrm{GrDP} = \mathrm{GDP} - \mathrm{External \; Costs} 
+$$
+""")
+
+st.write("""
+This interactive chart illustrates the evolution of GrDP and GDP in European countries, based on the various reporting methods and externalities pricing techniques introduced earlier.
+""")
+
+options_GrDP = [':blue[Evolution of GDP and GrDP]', ':blue[Map]', ':blue[Table]']
+selected_option_GrDP = st.radio("Select display option:", options_GrDP, key="radio_grdp")
+
+# Select GrDP and GDP data 
+GrDP_data = GrDP.loc[:, ['countries', 'Year', 'GDP [Euro]', 'GDP per capita [Euro]',
+                         'GrDP (Territorial & Low GHG with VOLY) scenario [Euro]',
+                         'GrDP (Territorial & Low GHG with VSL) scenario [Euro]',
+                         'GrDP (Territorial & Central GHG with VOLY) scenario [Euro]',
+                         'GrDP (Territorial & Central GHG with VSL) scenario [Euro]',
+                         'GrDP (Territorial & High GHG with VOLY) scenario [Euro]',
+                         'GrDP (Territorial & High GHG with VSL) scenario [Euro]',
+                         'GrDP (Residential & Low GHG with VOLY) scenario [Euro]',
+                         'GrDP (Residential & Low GHG with VSL) scenario [Euro]',
+                         'GrDP (Residential & Central GHG with VOLY) scenario [Euro]',
+                         'GrDP (Residential & Central GHG with VSL) scenario [Euro]',
+                         'GrDP (Residential & High GHG with VOLY) scenario [Euro]',
+                         'GrDP (Residential & High GHG with VSL) scenario [Euro]',
+                         'GrDP (Footprint & Low GHG with VOLY) scenario [Euro]',
+                         'GrDP (Footprint & Low GHG with VSL) scenario [Euro]',
+                         'GrDP (Footprint & Central GHG with VOLY) scenario [Euro]',
+                         'GrDP (Footprint & Central GHG with VSL) scenario [Euro]',
+                         'GrDP (Footprint & High GHG with VOLY) scenario [Euro]',
+                         'GrDP (Footprint & High GHG with VSL) scenario [Euro]', 
+                         'GrDP per capita (Territorial & Low GHG with VOLY) scenario [Euro]',
+                         'GrDP per capita (Territorial & Low GHG with VSL) scenario [Euro]',
+                         'GrDP per capita (Territorial & Central GHG with VOLY) scenario [Euro]',
+                         'GrDP per capita (Territorial & Central GHG with VSL) scenario [Euro]',
+                         'GrDP per capita (Territorial & High GHG with VOLY) scenario [Euro]',
+                         'GrDP per capita (Territorial & High GHG with VSL) scenario [Euro]',
+                         'GrDP per capita (Residential & Low GHG with VOLY) scenario [Euro]',
+                         'GrDP per capita (Residential & Low GHG with VSL) scenario [Euro]',
+                         'GrDP per capita (Residential & Central GHG with VOLY) scenario [Euro]',
+                         'GrDP per capita (Residential & Central GHG with VSL) scenario [Euro]',
+                         'GrDP per capita (Residential & High GHG with VOLY) scenario [Euro]',
+                         'GrDP per capita (Residential & High GHG with VSL) scenario [Euro]',
+                         'GrDP per capita (Footprint & Low GHG with VOLY) scenario [Euro]',
+                         'GrDP per capita (Footprint & Low GHG with VSL) scenario [Euro]',
+                         'GrDP per capita (Footprint & Central GHG with VOLY) scenario [Euro]',
+                         'GrDP per capita (Footprint & Central GHG with VSL) scenario [Euro]',
+                         'GrDP per capita (Footprint & High GHG with VOLY) scenario [Euro]',
+                         'GrDP per capita (Footprint & High GHG with VSL) scenario [Euro]']]
+GrDP_data = GrDP_data.sort_values(by=['countries', 'Year'])
+
+# Country list
+unique_countries_GrDP = sorted(GrDP_data['countries'].unique())
+default_country_GrDP = 'Switzerland'
+
+# Depending on the selected option, display the corresponding content
+if selected_option_GrDP == ':blue[Evolution of GDP and GrDP]':     # Plot of the evolution of GDP and GrDP
+    # Selection of country
+    selected_country_GrDP = st.selectbox("Select a country:", unique_countries_GrDP, index=unique_countries_GrDP.index(default_country_GrDP), key='country_GrDP_selectbox')
+    # Option to select between 'Total' and 'Per capita'
+    selected_metric = st.selectbox("Select metric:", ['Total', 'Per capita'], key="radio_metric_GrDP")
+    # Select scenarios
+    col1, col2, col3 = st.columns(3)
+    with col1:
+        ghg_report = st.selectbox("Select GHG reporting:", ['Territorial', 'Residential', 'Footprint'], index=0, key='ghg_GrDP_selectbox')
+    with col2:
+        carbon_cost = st.selectbox("Select cost of carbon:", ['Low', 'Central', 'High'], index=1, key='carbon-cost_GrDP_selectbox')
+    with col3:
+        valuation_method = st.selectbox("Select valuation method:", ['VSL', 'VOLY'], index=0, key='valuation_GrDP_selectbox')
+    # Select data and define graph layout
+    if selected_metric == 'Total':
+        selected_GrDP_col = f'GrDP ({ghg_report} & {carbon_cost} GHG with {valuation_method}) scenario [Euro]'
+        selected_GDP_col = 'GDP [Euro]'
+        # Create layout
+        layout_GrDP = go.Layout(
+            title=f'GDP and GrDP ({ghg_report} emissions, {carbon_cost} carbon cost, {valuation_method} valuation) of {selected_country_GrDP}',
+            xaxis=dict(title='Year'),
+            yaxis=dict(title='Euro', rangemode='tozero'),  # Fix minimum y-axis value at zero
+            margin=dict(l=40, r=40, t=40, b=30))
+    else:
+        selected_GrDP_col = f'GrDP per capita ({ghg_report} & {carbon_cost} GHG with {valuation_method}) scenario [Euro]'
+        selected_GDP_col = 'GDP per capita [Euro]'
+        # Create layout
+        layout_GrDP = go.Layout(
+            title=f'GDP and GrDP per capita ({ghg_report} emissions, {carbon_cost} carbon cost, {valuation_method} valuation) of {selected_country_GrDP}',
+            xaxis=dict(title='Year'),
+            yaxis=dict(title='Euro', rangemode='tozero'), 
+            margin=dict(l=40, r=40, t=40, b=30)
+        )       
+    # Filter data based on selected country
+    country_data_GrDP = GrDP_data.loc[GrDP_data['countries'] == selected_country_GrDP]
+    # Create traces for different emissions
+    traces_GrDP = [
+        go.Scatter(x=country_data_GrDP['Year'], y=country_data_GrDP[selected_GDP_col], mode='lines', name='GDP'),
+        go.Scatter(x=country_data_GrDP['Year'], y=country_data_GrDP[selected_GrDP_col], mode='lines', name='GrDP')
+    ]
+    # Plot graph
+    st.plotly_chart({'data': traces_GrDP, 'layout': layout_GrDP}, use_container_width=True)
+    
+elif selected_option_GrDP == ':blue[Map]': # Map of European countries
+    # Option to select between 'Total' and 'Per capita'
+    selected_metric = st.selectbox("Select metric:", ['Total', 'Per capita'], index=1, key="radio_metric_GrDP")
+    # Select scenarios
+    col1, col2, col3 = st.columns(3)
+    with col1:
+        ghg_report = st.selectbox("Select GHG reporting:", ['Territorial', 'Residential', 'Footprint'], index=0, key='ghg_map-GrDP_selectbox')
+    with col2:
+        carbon_cost = st.selectbox("Select cost of carbon:", ['Low', 'Central', 'High'], index=1, key='carbon-cost_map-GrDP_selectbox')
+    with col3:
+        valuation_method = st.selectbox("Select valuation method:", ['VSL', 'VOLY'], index=0, key='valuation_map-GrDP_selectbox')
+    # Select data and define graph layout    
+    if selected_metric == 'Total':
+        selected_GrDP_col = f'GrDP ({ghg_report} & {carbon_cost} GHG with {valuation_method}) scenario [Euro]'
+        title_GrDP = 'GrDP [Euro]'
+    else:
+        selected_GrDP_col = f'GrDP per capita ({ghg_report} & {carbon_cost} GHG with {valuation_method}) scenario [Euro]'
+        title_GrDP = 'GrDP per capita [Euro]'
+    # Define function to plot map
+    def plot_map_GrDP(column):
+        # Create a custom color scale
+        min_value = GrDP_data[column].min()
+        max_value = GrDP_data[column].max()        
+        if min_value < 0 and max_value > 0:
+            zero_position = abs(min_value) / (max_value - min_value)
+            custom_color_scale = [
+                (0.0, "red"),    # most negative
+                (zero_position, "white"),   # zero
+                (1.0, "blue")    # most positive
+            ]
+        elif min_value >= 0:
+            custom_color_scale = [
+                (0.0, "white"),
+                (1.0, "blue")
+            ]
+        else:
+            custom_color_scale = [
+                (0.0, "red"),
+                (1.0, "white")
+            ]       
+        # Create map
+        fig = px.choropleth(GrDP_data,
+                            locations='countries',
+                            locationmode='country names',
+                            color=column,
+                            hover_name='countries',
+                            animation_frame='Year',
+                            title="",
+                            color_continuous_scale=custom_color_scale, #px.colors.sequential.Blues,
+                            range_color=[GrDP_data[column].min(), GrDP_data[column].max()],
+                            scope='europe',
+                            height=600,
+                            width=800)      
+        # Update Layout
+        fig.update_coloraxes(colorbar_title=title_GrDP)
+        fig.update_layout(
+            margin={"r": 0, "t": 0, "l": 0, "b": 0},
+            geo=dict(
+                projection_scale=1.7,  # Adjust this value to zoom in or out
+                center=dict(lat=55, lon=10)  # Center on mainland Europe
+            ),
+            updatemenus=[{
+                'x': 0.1,
+                'xanchor': 'right',
+                'y': 0.1,
+                'yanchor': 'top'
+            }],
+            sliders=[{
+                'steps': [{
+                    'args': [[frame.name], {'frame': {'duration': 300, 'redraw': True}, 'mode': 'immediate', 'transition': {'duration': 300}}],
+                    'label': frame.name,
+                    'method': 'animate'
+                } for frame in fig.frames],
+                'active': len(fig.frames) - 1,  # Set the slider to the latest year
+                'x': 0.1,
+                'y': 0.1,
+                'len': 0.9,
+                'transition': {'duration': 300, 'easing': 'cubic-in-out'}
+            }]            
+        )
+        fig.update_traces(z=fig.frames[-1].data[0].z, hovertemplate=fig.frames[-1].data[0].hovertemplate)
+        # Display plotly chart
+        st.plotly_chart(fig, use_container_width=True)
+    # Plot map    
+    plot_map_GrDP(selected_GrDP_col)
+    
+elif selected_option_GrDP == ':blue[Table]':   # Dataframe with data
+    all_countries_option = "All countries"
+    selected_countries = st.multiselect("Select countries:", [all_countries_option] + list(unique_countries_GrDP), default=all_countries_option, key='Table_GrDP')
+    if all_countries_option in selected_countries:
+        filtered_data = GrDP_data.copy()  # Make a copy of the original DataFrame
+    else:
+        filtered_data = GrDP_data[GrDP_data['countries'].isin(selected_countries)]
+    st.write(filtered_data)
+
+    
 ###########################################################
 ##### Can we decouple economic growth and pollution ######
 #########################################################
 
 # Section: Decoupling
 st.header("Can we decouple economic growth and pollution?")
+
+st.write('##### What is decoupling ?')
+
+st.markdown("""
+Decoupling refers to an economy that grows without increasing the pressure on the environment. We generally distinguish between absolute and relative decoupling:
+- Absolute decoupling occurs when the pollution is decreasing while the economy is growing
+- Relative decoupling occurs when the pollution is increasing at a slower rate than the economy
+
+The following chart illustrates the decoupling between the emissions of various pollutants and economic growth (represented by GDP) or population, between 2011 and 2021. We use two indicators to evaluate decoupling: the OECD Decoupling Factor and the Intensity of Decoupling Factor.
+""")
+
+st.write('##### OECD Decoupling Factor')
+
+st.write("""
+The [OECD Decoupling Factor](https://one.oecd.org/document/sg/sd(2002)1/final/en/pdf) is the decrease rate of the ratio between the emissions of a given pollutant over the GDP (or population). More precisely, it is defined as:
+""")
+st.latex(r"D = 1- \frac{(\mathrm{Emissions/GDP})_{2021}}{(\mathrm{Emissions/GDP})_{2011}}")
+
+st.markdown("""
+The indicator can be interpreted as follows:
+- **When D is negative, there is no decoupling**: when D<0, the ratio Emissions/GDP is greater in 2021 than in 2011, and thus the environmental pressure increased;
+- **When D is positive, decoupling - relative or absolute - occurs**: when  D>0, the ratio Emissions/GDP decreased between 2011 and 2021. In the best case, D is equal to one, meaning that the emissions are zero in 2021.
+""")
+
+st.write('##### Intensity of Decoupling Factor')
+
+st.markdown("""
+The Intensity of Decoupling Factor compares the growth rate of the emissions of a given pollutant with the economic (or population) growth rate. With <span class="tooltip">$gE$ the growth rate of the emissions of a given pollutant)<span class="tooltiptext">$gE=(E_{2021}-E_{2011})/E_{2011}$</span></span> 
+and <span class="tooltip">$gGDP$ the economic growth rate)<span class="tooltiptext">$gGDP=(GDP_{2021}-GDP_{2011})/GDP_{2011}$</span></span>, 
+the Intensity of Decoupling Factor is defined as:
+""", unsafe_allow_html=True)
+st.latex(r"IF = - gE/gGDP")
+
+# Add custom CSS for tooltips
+st.markdown("""
+<style>
+.tooltip {
+  position: relative;
+  display: inline-block;
+  border-bottom: 1px dotted black; /* Dotted underline */
+}
+
+.tooltip .tooltiptext {
+  visibility: hidden;
+  width: 400px;
+  background-color: #f9f9f9;
+  color: #000;
+  text-align: center;
+  border-radius: 5px;
+  padding: 5px;
+  position: absolute;
+  z-index: 1;
+  bottom: 125%; /* Position the tooltip above the text */
+  left: 50%;
+  margin-left: -100px;
+  opacity: 0;
+  transition: opacity 0.3s;
+  box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+}
+
+.tooltip:hover .tooltiptext {
+  visibility: visible;
+  opacity: 1;
+}
+</style>
+""", unsafe_allow_html=True)
+
+st.markdown("""
+This indicator allows to distinguish between relative and absolute decoupling. In a period of economic growth:
+- **When IF< -1, there is no decoupling**: the growth rate of the emissions is greater than the economic growth rate;
+- **When -1<IF<0, relative decoupling occurs**: the growth rate of the emissions is positive, but smaller than the economic growth rate;
+- **When IF is positive, absolute decoupling occurs**: the emissions decreased between 2011 and 2021
+""")
+
+###########################################
+###### Decoupling indicators charts #######
+###########################################
+
+options_Decoupling = [':blue[Country comparison]', ':blue[Table]']
+selected_option_Decoupling = st.radio("Select display option:", options_Decoupling, key="radio_Decoupling")
+
+# Select indicator
+selected_indicator = st.selectbox("Select an indicator:", ['OECD Decoupling Factor', 'Intensity of Decoupling Factor'], index=0)
+
+# Select data
+if selected_indicator == 'OECD Decoupling Factor':
+    Decoupling_OECD_data = Decoupling_OECD.loc[:, ['countries', 'Year', 
+                                                       'Territorial GHG emissions_GDP',
+                                                       'Residential GHG emissions_GDP', 
+                                                       'Footprint GHG emissions_GDP', 
+                                                       'Air Pollutants Emissions_GDP',
+                                                       'PM2.5_GDP', 
+                                                       'PM10_GDP',
+                                                       'NOx_GDP',
+                                                       'SOx_GDP', 
+                                                       'NH3_GDP',  
+                                                       'NMVOC_GDP',
+                                                       'Heavy Metals Emissions_GDP',
+                                                       'As_GDP', 
+                                                       'Pb_GDP', 
+                                                       'Cd_GDP', 
+                                                       'Hg_GDP', 
+                                                       'Cr_GDP', 
+                                                       'Ni_GDP', 
+                                                       'Territorial GHG emissions_Population',
+                                                       'Residential GHG emissions_Population',
+                                                       'Footprint GHG emissions_Population',
+                                                       'Air Pollutants Emissions_Population',
+                                                       'PM2.5_Population',
+                                                       'PM10_Population',
+                                                       'NOx_Population',
+                                                       'SOx_Population',
+                                                       'NH3_Population',
+                                                       'NMVOC_Population',
+                                                       'Heavy Metals Emissions_Population',
+                                                       'As_Population',
+                                                       'Pb_Population',
+                                                       'Cd_Population',
+                                                       'Hg_Population',
+                                                       'Cr_Population',
+                                                       'Ni_Population'
+                                                      ]]
+    Decoupling_OECD_data = Decoupling_OECD_data.sort_values(by=['countries', 'Year'])
+elif selected_indicator == 'Intensity of Decoupling Factor':
+    Decoupling_IF_data = Decoupling_Intensity_Factor.loc[:, ['countries', 'Year', 
+                                                             'Territorial GHG emissions_GDP',
+                                                             'Residential GHG emissions_GDP', 
+                                                             'Footprint GHG emissions_GDP', 
+                                                             'Air Pollutants Emissions_GDP',
+                                                             'PM2.5_GDP', 
+                                                             'PM10_GDP',
+                                                             'NOx_GDP',
+                                                             'SOx_GDP', 
+                                                             'NH3_GDP',
+                                                             'NMVOC_GDP',
+                                                             'Heavy Metals Emissions_GDP',
+                                                             'As_GDP', 
+                                                             'Pb_GDP',
+                                                             'Cd_GDP', 
+                                                             'Hg_GDP', 
+                                                             'Cr_GDP', 
+                                                             'Ni_GDP',
+                                                             'Territorial GHG emissions_Population',
+                                                             'Residential GHG emissions_Population',
+                                                             'Footprint GHG emissions_Population',
+                                                             'Air Pollutants Emissions_Population',
+                                                             'PM2.5_Population',
+                                                             'PM10_Population',
+                                                             'NOx_Population',
+                                                             'SOx_Population',
+                                                             'NH3_Population',
+                                                             'NMVOC_Population',
+                                                             'Heavy Metals Emissions_Population',
+                                                             'As_Population',
+                                                             'Pb_Population',
+                                                             'Cd_Population',
+                                                             'Hg_Population',
+                                                             'Cr_Population',
+                                                             'Ni_Population'
+                                                            ]]
+    Decoupling_IF_data = Decoupling_IF_data.sort_values(by=['countries', 'Year'])    
+
+# List of pollutants
+Emissions_list = ['Territorial GHG emissions',
+                      'Residential GHG emissions',
+                      'Footprint GHG emissions',
+                      'Air Pollutants Emissions', 
+                      'PM2.5', 'PM10','NOx', 
+                      'SOx', 'NH3', 'NMVOC',
+                      'Heavy Metals Emissions',
+                      'As', 'Pb', 'Cd', 
+                      'Hg', 'Cr', 'Ni'
+                     ]    
+default_emission_decoupling = 'Territorial GHG emissions'    
+    
+if selected_option_Decoupling == ':blue[Country comparison]':
+    # Select indicator
+    col1, col2 = st.columns(2)
+    with col1:
+        selected_emission_decoupling = st.selectbox("Select a pollutant:", Emissions_list, index=Emissions_list.index(default_emission_decoupling))
+    with col2:
+        selected_metric = st.selectbox("Select quantity:", ['GDP', 'Population'], key="dropdown_quantity_decoupling")
+    selected_Decoupling_col = selected_emission_decoupling + '_' + selected_metric
+    # Filter data based on selected indicator and emission type
+    if selected_indicator == 'OECD Decoupling Factor':
+        data_decoupling = Decoupling_OECD_data.loc[
+            Decoupling_OECD_data['Year'] == 2021, ['countries', selected_Decoupling_col]
+        ]
+    elif selected_indicator == 'Intensity of Decoupling Factor':
+        data_decoupling = Decoupling_IF_data.loc[
+            Decoupling_IF_data['Year'] == 2021, ['countries', selected_Decoupling_col]
+        ]
+    # Sort the data by the selected decoupling column in descending order
+    data_decoupling = data_decoupling.sort_values(by=selected_Decoupling_col, ascending=True)
+    # Create traces for different emissions
+    Bar_plot_decoupling = [
+        go.Bar(x=data_decoupling[selected_Decoupling_col], y=data_decoupling['countries'], name=selected_emission_decoupling, orientation='h')
+    ]
+    # Create layout
+    layout_decoupling = go.Layout(
+        title=f'{selected_indicator} of {selected_emission_decoupling} with {selected_metric} between 2011 and 2021',
+        xaxis_title=f'{selected_indicator} of {selected_emission_decoupling} with {selected_metric}',
+        yaxis_title='Country',
+        xaxis=dict(rangemode='tozero'),  # Fix minimum x-axis value at zero
+        margin=dict(l=50, r=40, t=40, b=50),  # Increase left and bottom margins
+        height=600,  # Set a fixed height for the plot
+        yaxis=dict(automargin=True)  # Automatically adjust margins to fit labels
+    )
+    # Plot graph
+    st.plotly_chart({'data': Bar_plot_decoupling, 'layout': layout_decoupling}, use_container_width=True)
+
+elif selected_option_Decoupling == ':blue[Table]': 
+    all_countries_option = "All countries"
+    if selected_indicator == 'OECD Decoupling Factor':
+        unique_countries_OECD = sorted(Decoupling_OECD_data['countries'].unique())
+        selected_countries = st.multiselect("Select countries:", [all_countries_option] + list(unique_countries_OECD), default=all_countries_option, key='Table_OECD')
+        if all_countries_option in selected_countries:
+            filtered_data = Decoupling_OECD_data.copy()  # Make a copy of the original DataFrame
+        else:
+            filtered_data = Decoupling_OECD_data[Decoupling_OECD_data['countries'].isin(selected_countries)]
+        st.write(filtered_data)
+    elif selected_indicator == 'Intensity of Decoupling Factor':
+        unique_countries_IF = sorted(Decoupling_IF_data['countries'].unique())
+        selected_countries = st.multiselect("Select countries:", [all_countries_option] + list(unique_countries_IF), default=all_countries_option, key='Table_IF')
+        if all_countries_option in selected_countries:
+            filtered_data = Decoupling_IF_data.copy()  # Make a copy of the original DataFrame
+        else:
+            filtered_data = Decoupling_IF_data[Decoupling_IF_data['countries'].isin(selected_countries)]
+        st.write(filtered_data)
+
+    
+#################################################################
+######### Decoupling: Scatter Plot of growth rates ##############
+#################################################################
+
+st.markdown("""
+The following chart, which plots the relative differences in emissions (ΔEmissions) and GDP (ΔGDP), distinguishes even more forms of decoupling:
+- **Strong Negative Decoupling**: Emissions decrease proportionally more than GDP decreases.
+- **Weak Negative Decoupling**: Emissions decrease less than GDP decreases.
+- **Recessive Coupling**: Emissions decrease at a rate similar to or slightly more than GDP decreases.
+- **Recessive Decoupling**: Emissions decrease much more than GDP decreases.
+- **Weak Decoupling**: Emissions remain stable or decrease slightly, while GDP increases.
+- **Expansive Negative Decoupling**: Emissions increase much more than GDP increases.
+- **Expansive Coupling**: Emissions increase at a rate similar to GDP increases.
+- **Strong Decoupling**: Emissions decrease proportionally more than GDP increases.
+""")
+
+import pandas as pd
+import plotly.graph_objs as go
+import streamlit as st
+
+# Define color for each decoupling category
+color_mapping = {
+    'darkred': 'Strong negative decoupling',        # Dark Red
+    'darkorange': 'Weak negative decoupling',       # Dark Orange
+    'deeppink': 'Expansive coupling',               # Deep Pink
+    'gold': 'Expansive negative decoupling',        # Gold
+    'royalblue': 'Weak decoupling',                 # Royal Blue
+    'darkviolet': 'Recessive decoupling',           # Dark Violet
+    'darkmagenta': 'Recessive coupling',            # Dark Magenta
+    'darkgreen': 'Strong decoupling',               # Dark Green
+    'grey': 'Default color'                         # Grey
+}
+
+# Convert the dictionary to a DataFrame
+df_color_mapping = pd.DataFrame(list(color_mapping.items()), columns=['Color', 'Category'])
+
+# Create a reverse mapping from category to color for easy lookup
+category_to_color = df_color_mapping.set_index('Category')['Color'].to_dict()
+
+# Assuming Decoupling_Relative_Difference is already defined and loaded
+
+options_RelDif = [':blue[Scatter plot]', ':blue[Table]']
+selected_option_RelDif = st.radio("Select display option:", options_RelDif, key="radio_RelDif")
+
+def get_color(row, metric_col):
+    if row[metric_col] > 0 and row[selected_RelDif_col] > 0:
+        if row[selected_RelDif_col] / row[metric_col] > 1.2:
+            return category_to_color['Expansive negative decoupling']
+        elif row[selected_RelDif_col] / row[metric_col] >= 0.8:
+            return category_to_color['Expansive coupling']
+        else:
+            return category_to_color['Weak decoupling']
+    elif row[metric_col] > 0 and row[selected_RelDif_col] < 0:
+        return category_to_color['Strong decoupling']
+    elif row[metric_col] < 0 and row[selected_RelDif_col] < 0:
+        if row[selected_RelDif_col] / row[metric_col] > 1.2:
+            return category_to_color['Recessive coupling']
+        elif row[selected_RelDif_col] / row[metric_col] >= 0.8:
+            return category_to_color['Recessive decoupling']
+        else:
+            return category_to_color['Weak negative decoupling']
+    elif row[metric_col] < 0 and row[selected_RelDif_col] > 0:
+        return category_to_color['Strong negative decoupling']
+    else:
+        return category_to_color['Default color']
+    
+RelDif_data = Decoupling_Relative_Difference.loc[:, [
+        'countries', 'Year', 'Territorial GHG emissions',
+        'Residential GHG emissions',
+        'Transfer GHG emissions',
+        'Footprint GHG emissions',
+        'As', 'Pb', 'NOx', 'SOx', 'NH3', 'PM2.5', 'PM10', 'NMVOC',
+        'Cd', 'Hg', 'Cr', 'Ni', 'GDP', 'Population', 'Heavy Metals Emissions', 'Air Pollutants Emissions'
+    ]]
+
+if selected_option_RelDif == ':blue[Scatter plot]':
+    options = ['GDP', 'Population']
+    selected_metric = st.selectbox("Select quantity:", options, key="dropdown_quantity_RelDif")
+
+    Emissions_list = [
+        'Territorial GHG emissions', 'Footprint GHG emissions',
+        'Residential GHG emissions', 'Heavy Metals Emissions', 'Air Pollutants Emissions',
+        'NOx', 'SOx', 'NH3', 'PM2.5', 'PM10', 'NMVOC', 'As', 'Pb', 'Cd', 'Hg', 'Cr', 'Ni'
+    ]
+    default_emission_RelDif = 'Territorial GHG emissions'
+    selected_emission_RelDif = st.selectbox(
+        "Select a scenario:", Emissions_list, index=Emissions_list.index(default_emission_RelDif), key="emission_rel_diff_selectbox"
+    )
+    selected_RelDif_col = selected_emission_RelDif
+
+    # Filter data based on selected emission type
+    data_rel_dif = RelDif_data.loc[
+        RelDif_data['Year'] == 2021, ['countries', 'GDP', 'Population', selected_RelDif_col]
+    ]
+
+    data_rel_dif['color'] = data_rel_dif.apply(lambda row: get_color(row, selected_metric), axis=1)
+
+    # Create traces for different emissions as a scatter plot
+    Scatter_plot_RelDif = [
+        go.Scatter(
+            x=data_rel_dif[selected_metric], 
+            y=data_rel_dif[selected_RelDif_col], 
+            mode='markers',
+            marker=dict(color=data_rel_dif['color']),
+            text=data_rel_dif['countries'],  # Add country names for hover text
+            hoverinfo='text+x+y',  # Specify what info to show on hover
+            showlegend=False
+        )
+    ]
+
+    # Identify unique colors present in the data
+    unique_colors = data_rel_dif['color'].unique()
+
+    # Add custom legend traces
+    for color in unique_colors:
+        category_name = df_color_mapping[df_color_mapping['Color'] == color]['Category'].values[0]
+        Scatter_plot_RelDif.append(
+            go.Scatter(
+                x=[None], y=[None],
+                mode='markers',
+                marker=dict(color=color),
+                showlegend=True,
+                name=category_name
+            )
+        )
+
+    x_min = min(data_rel_dif[selected_metric])
+    x_max = max(data_rel_dif[selected_metric])
+    y_min = min(data_rel_dif[selected_RelDif_col])
+    y_max = max(data_rel_dif[selected_RelDif_col])
+
+    x_axis_min = - x_max - 0.1
+    x_axis_max = x_max + 0.1
+    y_axis_min = - y_max - 0.1
+    y_axis_max = y_max + 0.1
+
+    # Create layout with quadrant lines
+    layout_RelDif = go.Layout(
+        title=f'Decoupling between {selected_emission_RelDif} and {selected_metric} between 2011 and 2021 per Country',
+        xaxis=dict(title=f'Δ{selected_metric}', range=[x_axis_min, x_axis_max]),  # Ensure all quadrants are visible
+        yaxis=dict(title=f'Δ{selected_emission_RelDif}', range=[y_axis_min, y_axis_max]),  # Fix minimum y-axis value at zero
+        shapes=[
+            # Line for x-axis (horizontal)
+            dict(
+                type='line',
+                x0=x_axis_min,
+                y0=0,
+                x1=x_axis_max,
+                y1=0,
+                line=dict(
+                    color="grey",
+                    width=0.5
+                )
+            ),
+            # Line for y-axis (vertical)
+            dict(
+                type='line',
+                x0=0,
+                y0=y_axis_min,
+                x1=0,
+                y1=y_axis_max,
+                line=dict(
+                    color="grey",
+                    width=0.5
+                )
+            )
+        ],
+        margin=dict(l=50, r=40, t=40, b=50),  # Increase left and bottom margins
+        height=600  # Set a fixed height for the plot
+    )
+
+    # Create figure
+    fig = go.Figure(data=Scatter_plot_RelDif, layout=layout_RelDif)
+
+    # Plot graph
+    st.plotly_chart(fig, use_container_width=True)
+
+elif selected_option_RelDif == ':blue[Table]':
+    all_countries_option = "All countries"
+    unique_countries_RelDif = RelDif_data['countries'].unique()
+    selected_countries = st.multiselect("Select countries:", [all_countries_option] + list(unique_countries_RelDif), default=all_countries_option, key='Table_RelDif')
+    if all_countries_option in selected_countries:
+        filtered_data = RelDif_data.copy()  # Make a copy of the original DataFrame
+    else:
+        filtered_data = RelDif_data[RelDif_data['countries'].isin(selected_countries)]
+    st.write(filtered_data)
+
