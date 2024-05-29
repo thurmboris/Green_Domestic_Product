@@ -183,8 +183,9 @@ st.markdown(f"<h2 style='margin-top: 0px; margin-bottom: 0px; padding-top: 5px; 
 
 st.markdown("<div style='height: 25px;'></div>", unsafe_allow_html=True)  # Add big spacing
 
-st.image("https://viewpointvancouver.ca/wp-content/uploads/2012/11/new-yorker-shareholder-value.jpg", caption="Source: New Yorker", use_column_width=True)
+#st.image("https://viewpointvancouver.ca/wp-content/uploads/2012/11/new-yorker-shareholder-value.jpg", caption="Source: New Yorker", use_column_width=True)
 #st.image("https://dwighttowers.wordpress.com/wp-content/uploads/2011/05/polyp_cartoon_economic_growth_ecology.jpg?w=450&h=359", caption="Source: Dwighttowers", use_column_width=True)
+st.image("https://sustainabilityillustrated.com/en/files/2019/03/Economy-Growth-Metaphore-Cartoon-1.png", caption="Illustration by Alex Magnin, Sustainability Illustrated", use_column_width=True)
 
 ##########################
 ##### Abstract ######
