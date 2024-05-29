@@ -11,11 +11,11 @@ custom_css = """
 <style>
 .stApp {
     background-color: #333333; /* Black background color */
-    color: white;
+    color: #FFFFFF; /* White text color */
 }
 
 .stMarkdown, .stText, .stWrite {
-    color: white; /* Ensure other texts remain white */
+    color: #FFFFFF; /* Ensure other texts remain white */
 }
 
 .stTitle {
@@ -23,46 +23,95 @@ custom_css = """
 }
 
 h1 {
-    color: #005DC4; /* Titles color */
+    color: #1E90FF; /* Dodger Blue for main titles */
     text-align: left; /* Titles alignment */
 }
 
 h2, h3 {
-    color: #005DC4; /* Titles color */
+    color: #87CEFA; /* Light Sky Blue for subtitles */
     text-align: left; /* Titles alignment */
 }
 
 h4, h5, h6 {
-    color: #0093C4; /* Titles color */
+    color: #B0E0E6; /* Powder Blue for smaller titles */
 }
 
 /* Target blockquote element and its pseudo-element */
 blockquote {
-    border-left: 1px solid white; /* Change the color of the blockquote line */
-    color: white; /* Ensure text inside blockquote is white */
+    border-left: 1px solid #FFFFFF; /* Change the color of the blockquote line */
+    color: #FFFFFF; /* Ensure text inside blockquote is white */
 }
 
 blockquote:before {
-    background-color: white; /* Ensure pseudo-element is also white */
+    background-color: #FFFFFF; /* Ensure pseudo-element is also white */
 }
 
 .stSelectbox > label {
-    color: white;
+    color: #FFFFFF;
 }
 
 .stMultiselect > label {
-    color: white;
+    color: #FFFFFF;
 }
 
 .stRadio > label {
-    color: white;
+    color: #FFFFFF;
 }
-
 
 .main > div {
             padding-left: 0rem;
             padding-right: 0rem;
         }
+
+/* Ensure code blocks or any preformatted text is also clear */
+code, pre {
+    background-color: #444444; /* Slightly lighter grey for code blocks */
+    color: #FFFFFF; /* White text for code */
+}
+
+/* Style for hyperlinks */
+a, .stMarkdown a {
+    color: #B0E0E6; /* Powder Blue for hyperlinks */
+    text-decoration: none; /* Remove underline from links */
+}
+
+a:hover, .stMarkdown a:hover {
+    color: #87CEFA; /* Light Sky Blue when hovered */
+    text-decoration: underline; /* Underline links on hover */
+}
+
+/* Style for tooltip */
+.tooltip {
+  position: relative;
+  display: inline-block;
+  border-bottom: 1px dotted #005DC4; /* Powder Blue dotted underline */
+  color: #B0E0E6; /* Powder Blue text color for the main body of text */
+}
+
+.tooltip .tooltiptext {
+  visibility: hidden;
+  width: 400px; 
+  background-color: #333333; /* Match background color */
+  color: #B0E0E6; /* Powder Blue text color */
+  text-align: center;
+  border-radius: 5px;
+  padding: 10px; /* Increase padding for better readability */
+  position: absolute;
+  z-index: 1;
+  bottom: 125%; /* Position the tooltip above the text */
+  left: 50%;
+  transform: translateX(-50%); /* Center the tooltip */
+  opacity: 0;
+  transition: opacity 0.3s;
+  box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+  border: 1px solid #005DC4; /* Powder Blue border */
+  font-size: 0.9em; /* Reduce font size to 90% of the main body text size */
+}
+
+.tooltip:hover .tooltiptext {
+  visibility: visible;
+  opacity: 1;
+}
 
 </style>
 """
@@ -85,7 +134,7 @@ Decoupling_Relative_Difference = pd.read_csv('https://raw.githubusercontent.com/
 # Title
 st.title("Going beyond the GDP with the GrDP")
 
-st.markdown(f"<h2 style='margin-top: 0px; margin-bottom: 0px; padding-top: 5px; color: #005DC4'> Factoring health and environmental costs in economic success. </h2>", unsafe_allow_html=True)
+st.markdown(f"<h2 style='margin-top: 0px; margin-bottom: 0px; padding-top: 5px; color: #1E90FF'> Factoring health and environmental costs in economic success </h2>", unsafe_allow_html=True)
 
 st.markdown("<div style='height: 25px;'></div>", unsafe_allow_html=True)  # Add big spacing
 
@@ -872,45 +921,11 @@ The indicator can be interpreted as follows:
 st.write('##### Intensity of Decoupling Factor')
 
 st.markdown("""
-The Intensity of Decoupling Factor compares the growth rate of the emissions of a given pollutant with the economic (or population) growth rate. With <span class="tooltip">$gE$ the growth rate of the emissions of a given pollutant)<span class="tooltiptext">$gE=(E_{2021}-E_{2011})/E_{2011}$</span></span> 
-and <span class="tooltip">$gGDP$ the economic growth rate)<span class="tooltiptext">$gGDP=(GDP_{2021}-GDP_{2011})/GDP_{2011}$</span></span>, 
+The Intensity of Decoupling Factor compares the growth rate of the emissions of a given pollutant with the economic (or population) growth rate. With <span class="tooltip">$gE$ the growth rate of the emissions of a given pollutant<span class="tooltiptext">$gE=(E_{2021}-E_{2011})/E_{2011}$</span></span> 
+and <span class="tooltip">$gGDP$ the economic growth rate<span class="tooltiptext">$gGDP=(GDP_{2021}-GDP_{2011})/GDP_{2011}$</span></span>, 
 the Intensity of Decoupling Factor is defined as:
 """, unsafe_allow_html=True)
 st.latex(r"IF = - gE/gGDP")
-
-# Add custom CSS for tooltips
-st.markdown("""
-<style>
-.tooltip {
-  position: relative;
-  display: inline-block;
-  border-bottom: 1px dotted black; /* Dotted underline */
-}
-
-.tooltip .tooltiptext {
-  visibility: hidden;
-  width: 400px;
-  background-color: #f9f9f9;
-  color: #000;
-  text-align: center;
-  border-radius: 5px;
-  padding: 5px;
-  position: absolute;
-  z-index: 1;
-  bottom: 125%; /* Position the tooltip above the text */
-  left: 50%;
-  margin-left: -100px;
-  opacity: 0;
-  transition: opacity 0.3s;
-  box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
-}
-
-.tooltip:hover .tooltiptext {
-  visibility: visible;
-  opacity: 1;
-}
-</style>
-""", unsafe_allow_html=True)
 
 st.markdown("""
 This indicator allows to distinguish between relative and absolute decoupling. In a period of economic growth:
@@ -1081,98 +1096,106 @@ elif selected_option_Decoupling == ':blue[Table]':
 #################################################################
 
 st.markdown("""
-The following chart, which plots the relative differences in emissions (ΔEmissions) and GDP (ΔGDP), distinguishes even more forms of decoupling:
-- **Strong Negative Decoupling**: Emissions decrease proportionally more than GDP decreases.
-- **Weak Negative Decoupling**: Emissions decrease less than GDP decreases.
-- **Recessive Coupling**: Emissions decrease at a rate similar to or slightly more than GDP decreases.
-- **Recessive Decoupling**: Emissions decrease much more than GDP decreases.
-- **Weak Decoupling**: Emissions remain stable or decrease slightly, while GDP increases.
-- **Expansive Negative Decoupling**: Emissions increase much more than GDP increases.
-- **Expansive Coupling**: Emissions increase at a rate similar to GDP increases.
-- **Strong Decoupling**: Emissions decrease proportionally more than GDP increases.
-""")
-
-import pandas as pd
-import plotly.graph_objs as go
-import streamlit as st
+To further explore the various degrees of decoupling, the following chart plots the growth rate of emissions with respect to the growth rate of GDP (or population), between 2011 and 2021, for European countries.
+Authors from the literature, e.g., <span class="tooltip">Vehmas et al. (2003)<span class="tooltiptext">Vehmas, J., Malaska, P., et al. (2003). Europe in the global battle of sustainability: Rebound strikes back? Advanced Sustainability Analysis. Publications of the Turku School of Economics and Business Administration, series discussion and working papers, 7, 2003.</span></span> and [Tapio (2005)](https://www.sciencedirect.com/science/article/pii/S0967070X05000028) constructed a framework to distinguish different aspects of decoupling: 
+- Coupling occurs when emissions and GDP grow at a similar rate. More specifically, there is less than 20% variation between the emissions and GDP growth rates (0.8<gE/gDP<1.2). We differentiate:
+    - **Expansive Coupling**: Emissions and GDP increase at a similar rate;
+    - **Recessive Coupling**: Emissions and GDP decrease at a similar rate;
+- Decoupling occurs when emissions grow at a significantly slower rate than GDP:
+    - **Strong Decoupling**: Emissions decrease (gE<0) and GDP increases (gGDP>0), i.e., absolute decoupling occurs;
+    - **Weak Decoupling**: Emissions and GDP both increase, but the rise in emissions is significantly smaller than the GDP growth (gE>0, gGDP>0, gE/gGDP<0.8). This is a case of relative decoupling;
+    - **Recessive Decoupling**: Emissions and GDP both decrease, but the reduction in emissions is significantly greater than the economic contraction (gE<0, gGDP<0, gE/gGDP>1.2);
+- Finally, the worst case scenario is negative decoupling, when emissions grow at a significantly faster rate than GDP:
+    - **Expansive Negative Decoupling**: Emissions and GDP both increase, but emissions grow at a signigicantly faster rate than GDP (gE>0, gGDP>0, gE/gGDP>1.2);
+    - **Strong Negative Decoupling**: Emissions increase although GDP decreases (gE>0, gGDP<0;
+    - **Weak Negative Decoupling**: Emissions and GDP both decrease, but the reduction in emissions is significantly smaller than the economic contraction (gE<0, gGDP<0, gE/gGDP<0.8).
+""", unsafe_allow_html=True)
 
 # Define color for each decoupling category
 color_mapping = {
-    'darkred': 'Strong negative decoupling',        # Dark Red
-    'darkorange': 'Weak negative decoupling',       # Dark Orange
-    'deeppink': 'Expansive coupling',               # Deep Pink
-    'gold': 'Expansive negative decoupling',        # Gold
-    'royalblue': 'Weak decoupling',                 # Royal Blue
-    'darkviolet': 'Recessive decoupling',           # Dark Violet
-    'darkmagenta': 'Recessive coupling',            # Dark Magenta
+    'darkmagenta': 'Expansive coupling',            # Deep Magenta
+    'deeppink': 'Recessive coupling',               # Gold
     'darkgreen': 'Strong decoupling',               # Dark Green
-    'grey': 'Default color'                         # Grey
+    'royalblue': 'Weak decoupling',                 # Royal Blue 
+    'darkviolet': 'Recessive decoupling',           # Dark Violet
+    'darkorange': 'Expansive negative decoupling',  # Dark orange
+    'darkred': 'Strong negative decoupling',        # Dark Red 
+    'gold': 'Weak negative decoupling',             # Dark Pink 
+    'grey': 'Zero emissions in 2011'                # Grey
 }
-
-# Convert the dictionary to a DataFrame
-df_color_mapping = pd.DataFrame(list(color_mapping.items()), columns=['Color', 'Category'])
-
-# Create a reverse mapping from category to color for easy lookup
-category_to_color = df_color_mapping.set_index('Category')['Color'].to_dict()
-
-# Assuming Decoupling_Relative_Difference is already defined and loaded
-
-options_RelDif = [':blue[Scatter plot]', ':blue[Table]']
-selected_option_RelDif = st.radio("Select display option:", options_RelDif, key="radio_RelDif")
-
+df_color_mapping = pd.DataFrame(list(color_mapping.items()), columns=['Color', 'Category']) # Convert the dictionary to a DataFrame
+category_to_color = df_color_mapping.set_index('Category')['Color'].to_dict()   # Create a reverse mapping from category to color for easy lookup
+# Function to apply color to data
 def get_color(row, metric_col):
     if row[metric_col] > 0 and row[selected_RelDif_col] > 0:
         if row[selected_RelDif_col] / row[metric_col] > 1.2:
             return category_to_color['Expansive negative decoupling']
-        elif row[selected_RelDif_col] / row[metric_col] >= 0.8:
-            return category_to_color['Expansive coupling']
-        else:
+        elif row[selected_RelDif_col] / row[metric_col] < 0.8:
             return category_to_color['Weak decoupling']
+        else:
+            return category_to_color['Expansive coupling']
     elif row[metric_col] > 0 and row[selected_RelDif_col] < 0:
         return category_to_color['Strong decoupling']
     elif row[metric_col] < 0 and row[selected_RelDif_col] < 0:
         if row[selected_RelDif_col] / row[metric_col] > 1.2:
-            return category_to_color['Recessive coupling']
-        elif row[selected_RelDif_col] / row[metric_col] >= 0.8:
             return category_to_color['Recessive decoupling']
-        else:
+        elif row[selected_RelDif_col] / row[metric_col] < 0.8:
             return category_to_color['Weak negative decoupling']
+        else:
+            return category_to_color['Recessive coupling']
     elif row[metric_col] < 0 and row[selected_RelDif_col] > 0:
         return category_to_color['Strong negative decoupling']
     else:
-        return category_to_color['Default color']
-    
+        return category_to_color['Zero emissions in 2011']
+
+# Select chart
+options_RelDif = [':blue[Scatter plot]', ':blue[Table]']
+selected_option_RelDif = st.radio("Select display option:", options_RelDif, key="radio_RelDif")
+
+# Select data
 RelDif_data = Decoupling_Relative_Difference.loc[:, [
-        'countries', 'Year', 'Territorial GHG emissions',
-        'Residential GHG emissions',
-        'Transfer GHG emissions',
-        'Footprint GHG emissions',
-        'As', 'Pb', 'NOx', 'SOx', 'NH3', 'PM2.5', 'PM10', 'NMVOC',
-        'Cd', 'Hg', 'Cr', 'Ni', 'GDP', 'Population', 'Heavy Metals Emissions', 'Air Pollutants Emissions'
+    'countries', 'Year', 
+    'Territorial GHG emissions',
+    'Residential GHG emissions',
+    'Footprint GHG emissions',
+    'Air Pollutants Emissions',
+    'PM2.5', 'PM10', 'NOx',
+    'SOx', 'NH3', 'NMVOC',
+    'Heavy Metals Emissions',
+    'As', 'Pb', 'Cd', 
+    'Hg', 'Cr', 'Ni', 
+    'GDP', 'Population'
     ]]
+RelDif_data = RelDif_data.sort_values(by=['countries', 'Year'])
+RelDif_data.loc[:, ~RelDif_data.columns.isin(['countries', 'Year'])] *= 100   # Multiply all values by 100 to obtain percentages
 
+# Emissions list
+Emissions_list = [
+    'Territorial GHG emissions', 
+    'Residential GHG emissions',
+    'Footprint GHG emissions',
+    'Air Pollutants Emissions',
+    'PM2.5', 'PM10', 'NOx',
+    'SOx', 'NH3', 'NMVOC',
+    'Heavy Metals Emissions', 
+    'As', 'Pb', 'Cd', 
+    'Hg', 'Cr', 'Ni'
+    ]
+default_emission_RelDif = 'Territorial GHG emissions'
+
+# Depending on the selected option, display the corresponding content
 if selected_option_RelDif == ':blue[Scatter plot]':
-    options = ['GDP', 'Population']
-    selected_metric = st.selectbox("Select quantity:", options, key="dropdown_quantity_RelDif")
-
-    Emissions_list = [
-        'Territorial GHG emissions', 'Footprint GHG emissions',
-        'Residential GHG emissions', 'Heavy Metals Emissions', 'Air Pollutants Emissions',
-        'NOx', 'SOx', 'NH3', 'PM2.5', 'PM10', 'NMVOC', 'As', 'Pb', 'Cd', 'Hg', 'Cr', 'Ni'
-    ]
-    default_emission_RelDif = 'Territorial GHG emissions'
-    selected_emission_RelDif = st.selectbox(
-        "Select a scenario:", Emissions_list, index=Emissions_list.index(default_emission_RelDif), key="emission_rel_diff_selectbox"
-    )
-    selected_RelDif_col = selected_emission_RelDif
-
+    # Select indicator
+    col1, col2 = st.columns(2)
+    with col1:
+        selected_emission_RelDif = st.selectbox("Select a pollutant:", Emissions_list, index=Emissions_list.index(default_emission_RelDif), key="emission_rel_diff_selectbox")
+    with col2:
+        selected_metric = st.selectbox("Select quantity:", ['GDP', 'Population'], key="dropdown_quantity_RelDif")
+    selected_RelDif_col = selected_emission_RelDif   
     # Filter data based on selected emission type
-    data_rel_dif = RelDif_data.loc[
-        RelDif_data['Year'] == 2021, ['countries', 'GDP', 'Population', selected_RelDif_col]
-    ]
-
+    data_rel_dif = RelDif_data.loc[RelDif_data['Year'] == 2021, ['countries', 'GDP', 'Population', selected_RelDif_col]]
     data_rel_dif['color'] = data_rel_dif.apply(lambda row: get_color(row, selected_metric), axis=1)
-
+    unique_colors = data_rel_dif['color'].unique()
     # Create traces for different emissions as a scatter plot
     Scatter_plot_RelDif = [
         go.Scatter(
@@ -1185,10 +1208,6 @@ if selected_option_RelDif == ':blue[Scatter plot]':
             showlegend=False
         )
     ]
-
-    # Identify unique colors present in the data
-    unique_colors = data_rel_dif['color'].unique()
-
     # Add custom legend traces
     for color in unique_colors:
         category_name = df_color_mapping[df_color_mapping['Color'] == color]['Category'].values[0]
@@ -1201,29 +1220,24 @@ if selected_option_RelDif == ':blue[Scatter plot]':
                 name=category_name
             )
         )
-
+    # Create layout with quadrant lines
     x_min = min(data_rel_dif[selected_metric])
     x_max = max(data_rel_dif[selected_metric])
     y_min = min(data_rel_dif[selected_RelDif_col])
     y_max = max(data_rel_dif[selected_RelDif_col])
-
-    x_axis_min = - x_max - 0.1
-    x_axis_max = x_max + 0.1
-    y_axis_min = - y_max - 0.1
-    y_axis_max = y_max + 0.1
-
-    # Create layout with quadrant lines
+    xy_max = max(x_max, y_max)+10
+    xy_min = min(x_min, y_min)-10
     layout_RelDif = go.Layout(
-        title=f'Decoupling between {selected_emission_RelDif} and {selected_metric} between 2011 and 2021 per Country',
-        xaxis=dict(title=f'Δ{selected_metric}', range=[x_axis_min, x_axis_max]),  # Ensure all quadrants are visible
-        yaxis=dict(title=f'Δ{selected_emission_RelDif}', range=[y_axis_min, y_axis_max]),  # Fix minimum y-axis value at zero
+        title=f'Growth of {selected_emission_RelDif} and {selected_metric} between 2011 and 2021 per Country',
+        xaxis=dict(title=f'Growth of {selected_metric} [%]', range=[xy_min, xy_max]),  
+        yaxis=dict(title=f'Growth of {selected_emission_RelDif} [%]', range=[xy_min, xy_max]),  
         shapes=[
             # Line for x-axis (horizontal)
             dict(
                 type='line',
-                x0=x_axis_min,
+                x0=xy_min,
                 y0=0,
-                x1=x_axis_max,
+                x1=xy_max,
                 y1=0,
                 line=dict(
                     color="grey",
@@ -1234,9 +1248,9 @@ if selected_option_RelDif == ':blue[Scatter plot]':
             dict(
                 type='line',
                 x0=0,
-                y0=y_axis_min,
+                y0=xy_min,
                 x1=0,
-                y1=y_axis_max,
+                y1=xy_max,
                 line=dict(
                     color="grey",
                     width=0.5
@@ -1246,10 +1260,8 @@ if selected_option_RelDif == ':blue[Scatter plot]':
         margin=dict(l=50, r=40, t=40, b=50),  # Increase left and bottom margins
         height=600  # Set a fixed height for the plot
     )
-
     # Create figure
     fig = go.Figure(data=Scatter_plot_RelDif, layout=layout_RelDif)
-
     # Plot graph
     st.plotly_chart(fig, use_container_width=True)
 
@@ -1263,3 +1275,29 @@ elif selected_option_RelDif == ':blue[Table]':
         filtered_data = RelDif_data[RelDif_data['countries'].isin(selected_countries)]
     st.write(filtered_data)
 
+    
+#######################################
+######### Final section ##############
+######################################
+
+    
+ # Define the final markdown message with custom CSS for styling
+final_markdown = """
+<hr style="border: none; border-top: 1px solid white; margin-top: 30px; margin-bottom: 30px;" />
+
+<div style="background-color: #444444; padding: 20px; border-radius: 10px;">
+<p style="color: powderblue; font-size: 16px;">
+<strong>Article written by <a href="https://e4s.center/about-e4s/people/boris-thurm/" style="color: lightblue;">Boris Thurm</a> and Antoine Trabia</strong>
+</p>
+<p style="color: powderblue; font-size: 14px;">
+You are free to download, modify, and share the visualizations and data behind this work in any medium, provided the original data sources and authors are credited. This article can be cited as: 
+</p>
+<p style="color: powderblue; font-size: 14px;">
+"Boris Thurm and Antoine Trabia (2024) - Going beyond the GDP with the GrDP: Factoring health and environmental costs in economic success. Retrieved from: 'https://green-dp.streamlit.app/' [Online Resource]"
+</p>
+<p style="color: powderblue; font-size: 14px;">
+For any inquiry or suggestions, please contact Boris Thurm at <a href="mailto:boris.thurm@epfl.ch" style="color: lightblue;">boris.thurm@epfl.ch</a>.
+</p>
+</div>
+"""
+st.markdown(final_markdown, unsafe_allow_html=True)   
