@@ -20,6 +20,14 @@ import plotly.express as px
 import seaborn as sns
 import re
 
+# Load data
+Emissions = pd.read_csv('https://raw.githubusercontent.com/thurmboris/Green_Domestic_Product/main/data/final/Emissions.csv')
+External_costs = pd.read_csv('https://raw.githubusercontent.com/thurmboris/Green_Domestic_Product/main/data/final/ExternalCosts.csv')
+GrDP = pd.read_csv('https://raw.githubusercontent.com/thurmboris/Green_Domestic_Product/main/data/final/GrDP.csv')
+Decoupling_OECD = pd.read_csv('https://raw.githubusercontent.com/thurmboris/Green_Domestic_Product/main/data/final/Decoupling_OECD_Indicator.csv')
+Decoupling_Intensity_Factor = pd.read_csv('https://raw.githubusercontent.com/thurmboris/Green_Domestic_Product/main/data/final/Decoupling_Intensity_Factor.csv')
+Decoupling_Relative_Difference = pd.read_csv('https://raw.githubusercontent.com/thurmboris/Green_Domestic_Product/main/data/final/Decoupling_Relative_Difference.csv')
+
 # Define the custom CSS
 custom_css = """
 <style>
@@ -134,7 +142,7 @@ a:hover, .stMarkdown a:hover {
 }
 
 .stSidebar .sidebar-content a {
-    color: #B0E0E6; /* Powder Blue for hyperlinks */
+    color: #87CEFA; /* Powder Blue for hyperlinks */
 }
 
 .stSidebar .sidebar-content a:hover {
@@ -147,13 +155,22 @@ a:hover, .stMarkdown a:hover {
 # Inject the custom CSS
 st.markdown(custom_css, unsafe_allow_html=True)
 
-# Load data
-Emissions = pd.read_csv('https://raw.githubusercontent.com/thurmboris/Green_Domestic_Product/main/data/final/Emissions.csv')
-External_costs = pd.read_csv('https://raw.githubusercontent.com/thurmboris/Green_Domestic_Product/main/data/final/ExternalCosts.csv')
-GrDP = pd.read_csv('https://raw.githubusercontent.com/thurmboris/Green_Domestic_Product/main/data/final/GrDP.csv')
-Decoupling_OECD = pd.read_csv('https://raw.githubusercontent.com/thurmboris/Green_Domestic_Product/main/data/final/Decoupling_OECD_Indicator.csv')
-Decoupling_Intensity_Factor = pd.read_csv('https://raw.githubusercontent.com/thurmboris/Green_Domestic_Product/main/data/final/Decoupling_Intensity_Factor.csv')
-Decoupling_Relative_Difference = pd.read_csv('https://raw.githubusercontent.com/thurmboris/Green_Domestic_Product/main/data/final/Decoupling_Relative_Difference.csv')
+# Create a table of contents
+toc_items = ["Why the Green Domestic Product?",
+             "Air pollution is decreasing",
+             "External costs remain significant", 
+             "The GrDP of European countries", 
+             "Can we decouple economic growth and pollution?"]
+
+# Render the table of contents on the side of the page
+st.sidebar.header("Table of Contents")
+for item in toc_items:
+    # Manually specify the anchor link for headers with special characters
+    if "?" in item:
+        anchor_link = item.lower().replace(' ', '-').replace('.', '').replace('?', '')  # Remove question mark from anchor link
+    else:
+        anchor_link = item.lower().replace(' ', '-').replace('.', '')
+    st.sidebar.markdown(f"- [{item}](#{anchor_link})")
 
 #############################
 ##### GrDP Dashboard  ######
@@ -217,23 +234,6 @@ st.markdown("<div style='height: 20px;'></div>", unsafe_allow_html=True)  # Add 
 
 st.markdown("""With E4S, we propose a novel indicator, the Green Domestic Product (GrDP), to remedy some of the shortcomings of GDP. The GrDP is calculated by subtracting the external costs associated with producing goods and services from the standard measurement of GDP. The current scope of the GrDP includes the emissions of greenhouse gases (GHG), air pollutants, and heavy metals. The impacts covered include climate change, health issues, decrease in crops’ yields and biomass production, buildings degradation, and damages to ecosystems due to eutrophication. You can learn more about the GrDP, including a detailed description of the method used, data scources, and assumptions, on the [E4S webpage Green Domestic Product](https://e4s.center/resources/reports/green-domestic-product/). 
 """)
-
-# Create a table of contents
-toc_items = ["Why the Green Domestic Product?",
-             "Air pollution is decreasing",
-             "External costs remain significant", 
-             "The GrDP of European countries", 
-             "Can we decouple economic growth and pollution?"]
-
-# Render the table of contents on the side of the page
-st.sidebar.header("Table of Contents")
-for item in toc_items:
-    # Manually specify the anchor link for headers with special characters
-    if "?" in item:
-        anchor_link = item.lower().replace(' ', '-').replace('.', '').replace('?', '')  # Remove question mark from anchor link
-    else:
-        anchor_link = item.lower().replace(' ', '-').replace('.', '')
-    st.sidebar.markdown(f"- [{item}](#{anchor_link})")
 
         
 #############################################
@@ -366,7 +366,6 @@ elif selected_option == ':blue[Table]':   # Dataframe with data
     else:
         filtered_data = GHG_data[GHG_data['countries'].isin(selected_countries)]
     st.write(filtered_data)
-
 
     
 # Subsection: Air pollutant
