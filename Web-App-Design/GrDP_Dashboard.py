@@ -1,3 +1,17 @@
+#################################################
+####### Green Domestic Product Web App #########
+################################################
+
+#############################################################################
+# How to run locally?
+# Open a console, change directory to python script location, execute: 
+#        "streamlit run GrDP_Dashboard.py"
+###
+# How to automatically update local web app when script is edited?
+# Open a console, change directory to python script location, execute:
+#         "python GrDP_watchdog_script.py"
+############################################################################
+
 import pandas as pd
 import numpy as np
 import streamlit as st
@@ -111,6 +125,20 @@ a:hover, .stMarkdown a:hover {
 .tooltip:hover .tooltiptext {
   visibility: visible;
   opacity: 1;
+}
+
+/* Sidebar table of contents */
+.stSidebar, .stSidebar .sidebar-content {
+    background-color: #222222; /* Dark background color */
+    color: #FFFFFF; /* White text color */
+}
+
+.stSidebar .sidebar-content a {
+    color: #B0E0E6; /* Powder Blue for hyperlinks */
+}
+
+.stSidebar .sidebar-content a:hover {
+    color: #87CEFA; /* Light Sky Blue when hovered */
 }
 
 </style>
